@@ -33,7 +33,7 @@ Boolean *cont)
       XSetForeground(XtDisplay(w), inputGC, fg ^ bg);
     }
 
-    if (button_pressed > 1)
+    if(button_pressed > 1)
     {
       /* erase previous position */
       XDrawLine(XtDisplay(w), XtWindow(w), inputGC, x1, y1, x2, y2);
@@ -144,12 +144,10 @@ void MainWindow::QuitCB(Widget w, XtPointer client_data, XtPointer call_data)
  **/
 MainWindow::MainWindow(int argc, char **argv)
 {
-  Widget topLevel, mainWin, frame, drawArea, rowColumn, quitBtn, clearBtn;
-
   XtSetLanguageProc(NULL, (XtLanguageProc)NULL, NULL);
 
-  topLevel = XtVaAppInitialize(
-    &app_context,
+  m_top_level = XtVaAppInitialize(
+    &m_app_context,
     "Draw",
     NULL, 0,
     &argc, argv,
@@ -157,63 +155,65 @@ MainWindow::MainWindow(int argc, char **argv)
     NULL
   );
 
-  mainWin = XtVaCreateManagedWidget(
+  m_main_win = XtVaCreateManagedWidget(
     "mainWin",
     xmMainWindowWidgetClass,
-    topLevel,
+    m_top_level,
     XmNcommandWindowLocation, XmCOMMAND_BELOW_WORKSPACE,
     NULL
   );
 
-  frame = XtVaCreateManagedWidget(
+  m_frame = XtVaCreateManagedWidget(
     "frame",
     xmFrameWidgetClass,
-    mainWin,
+    m_main_win,
     NULL
   );
 
-  drawArea = XtVaCreateManagedWidget(
+  m_draw_area = XtVaCreateManagedWidget(
     "drawingArea",
     xmDrawingAreaWidgetClass,
-    frame,
+    m_frame,
     XmNwidth, 200,
     XmNheight, 100,
     NULL
   );
 
-  rowColumn = XtVaCreateManagedWidget(
+  m_row_column = XtVaCreateManagedWidget(
     "rowColumn",
     xmRowColumnWidgetClass,
-    mainWin,
+    m_main_win,
     XmNentryAlignment, XmALIGNMENT_CENTER,
     XmNorientation, XmHORIZONTAL,
     XmNpacking, XmPACK_COLUMN,
     NULL
   );
 
-  clearBtn = XtVaCreateManagedWidget("Clear",
+  m_clear_btn = XtVaCreateManagedWidget(
+    "Clear",
     xmPushButtonWidgetClass,
-    rowColumn,
+    m_row_column,
     NULL
   );
 
-  quitBtn = XtVaCreateManagedWidget(
+  m_quit_btn = XtVaCreateManagedWidget(
     "Quit",
     xmPushButtonWidgetClass,
-    rowColumn,
+    m_row_column,
     NULL
   );
 
-  XmMainWindowSetAreas(mainWin, NULL, rowColumn, NULL, NULL, frame);
+  XmMainWindowSetAreas(m_main_win, NULL, m_row_column, NULL, NULL, m_frame);
 
-  XtAddCallback(drawArea, XmNinputCallback, &MainWindow::DrawLineCB, drawArea);
-  XtAddEventHandler(drawArea, ButtonMotionMask, False, InputLineEH, NULL);
-  XtAddCallback(drawArea, XmNexposeCallback, &MainWindow::ExposeCB, drawArea);
+  XtAddCallback(m_draw_area, XmNinputCallback, &MainWindow::DrawLineCB, m_draw_area);
+  XtAddEventHandler(m_draw_area, ButtonMotionMask, False, InputLineEH, NULL);
+  XtAddCallback(m_draw_area, XmNexposeCallback, &MainWindow::ExposeCB, m_draw_area);
 
-  XtAddCallback(clearBtn, XmNactivateCallback, &MainWindow::ClearCB, drawArea);
-  XtAddCallback(quitBtn, XmNactivateCallback, &MainWindow::QuitCB, 0);
+  XtAddCallback(m_clear_btn, XmNactivateCallback, &MainWindow::ClearCB,
+    m_draw_area);
+  XtAddCallback(m_quit_btn, XmNactivateCallback, &MainWindow::QuitCB, 0);
 
-  XtRealizeWidget(topLevel);
+  XtRealizeWidget(m_top_level);
 }
 
 MainWindow::~MainWindow()
@@ -222,6 +222,6 @@ MainWindow::~MainWindow()
 
 int MainWindow::run()
 {
-  XtAppMainLoop(app_context);
+  XtAppMainLoop(m_app_context);
   return 0;
 }

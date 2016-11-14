@@ -36,9 +36,17 @@ private:
   static GC drawGC;          // GC used for final drawing
   static GC inputGC;         // GC used for drawing current position
   static int button_pressed; // input state
+  static int x1, y1, x2, y2; // input coords
 
-  static int x1, y1, x2, y2;
-  XtAppContext app_context;
+  Widget m_top_level;
+  Widget m_main_win;
+  Widget m_frame;
+  Widget m_draw_area;
+  Widget m_row_column;
+  Widget m_quit_btn;
+  Widget m_clear_btn;
+
+  XtAppContext m_app_context;
 };
 
 #endif // MAINWINDOW_H
