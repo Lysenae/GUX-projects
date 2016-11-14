@@ -34,19 +34,36 @@ bool Colors::Init(Widget shell)
   return true;
 }
 
-Pixel Colors::background()
+Pixel Colors::Background()
 {
   return m_background;
 }
 
-Pixel Colors::foreground()
+Pixel Colors::Foreground()
 {
   return m_foreground;
 }
 
-int Colors::count()
+void Colors::SetBackground(unsigned int i)
+{
+  if(i < m_colors.size())
+    m_background = m_colors[i];
+}
+
+void Colors::SetForeground(unsigned int i)
+{
+  if(i < m_colors.size())
+    m_foreground = m_colors[i];
+}
+
+int Colors::Count()
 {
   return m_colors.size();
+}
+
+std::vector<std::string> Colors::Names()
+{
+  return m_color_names;
 }
 
 std::vector<std::string> Colors::InitColorNames()

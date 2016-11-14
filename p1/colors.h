@@ -12,9 +12,12 @@ class Colors
 {
 public:
   static bool Init(Widget shell);
-  static Pixel background();
-  static Pixel foreground();
-  static int count();
+  static Pixel Background();
+  static Pixel Foreground();
+  static void SetBackground(unsigned int i);
+  static void SetForeground(unsigned int i);
+  static int Count();
+  static std::vector<std::string> Names();
 
 private:
   static std::vector<std::string> m_color_names;
