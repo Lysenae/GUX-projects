@@ -152,6 +152,8 @@ MainWindow::MainWindow(int argc, char **argv)
     NULL
   );
 
+  CreateMenu();
+
   m_frame = XtVaCreateManagedWidget(
     "frame",
     xmFrameWidgetClass,
@@ -202,6 +204,10 @@ MainWindow::MainWindow(int argc, char **argv)
     m_draw_area);
   XtAddCallback(m_quit_btn, XmNactivateCallback, &MainWindow::QuitCB, 0);
 
+  XtAddCallback(m_menu_clear_btn, XmNactivateCallback, &MainWindow::ClearCB,
+    m_draw_area);
+  XtAddCallback(m_menu_exit_btn, XmNactivateCallback, &MainWindow::QuitCB, 0);
+
   XtRealizeWidget(m_top_level);
 }
 
@@ -214,4 +220,29 @@ int MainWindow::run()
 {
   XtAppMainLoop(m_app_context);
   return 0;
+}
+
+void MainWindow::CreateMenu()
+{
+  Arg args[4];
+
+  m_menu_bar   = XmCreateMenuBar(m_main_win, (char*)"MenuBar", NULL, 0);
+  m_menu       = XmCreatePulldownMenu(m_menu_bar, (char*)"FileMenu", NULL, 0);
+  m_menu_w     = XmCreatePulldownMenu(m_menu_bar, (char*)"FilePullDown", NULL, 0);
+  m_menu_label = XmStringCreateLocalized((char*)"File");
+
+  XtSetArg(args[0], XmNmnemonic, 'F');
+  XtSetArg(args[1], XmNlabelString, m_menu_label);
+  XtSetArg(args[2], XmNsubMenuId, m_menu_w);
+
+  m_menu_cascade = XmCreateCascadeButton(m_menu_bar, (char*)"File", args, 3);
+  XtManageChild(m_menu_cascade);
+  XmStringFree(m_menu_label);
+
+  m_menu_clear_btn =
+    XtVaCreateManagedWidget("Clear", xmPushButtonGadgetClass, m_menu_w, NULL);
+  m_menu_exit_btn =
+    XtVaCreateManagedWidget("Exit", xmPushButtonGadgetClass, m_menu_w, NULL);
+
+  XtManageChild(m_menu_bar);
 }

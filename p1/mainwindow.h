@@ -9,6 +9,8 @@
 #include <Xm/DrawingA.h>
 #include <Xm/PushB.h>
 #include <Xm/RowColumn.h>
+#include <Xm/PushBG.h>
+#include <Xm/CascadeB.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,7 +46,18 @@ private:
   Widget m_quit_btn;
   Widget m_clear_btn;
 
+  // Menu
+  Widget   m_menu_bar;
+  Widget   m_menu;
+  Widget   m_menu_w;
+  Widget   m_menu_clear_btn;
+  Widget   m_menu_exit_btn;
+  Widget   m_menu_cascade;
+  XmString m_menu_label;
+
   XtAppContext m_app_context;
+
+  void CreateMenu();
 };
 
 #endif // MAINWINDOW_H
