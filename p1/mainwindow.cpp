@@ -141,6 +141,8 @@ MainWindow::MainWindow(int argc, char **argv)
     NULL, 0,
     &argc, argv,
     NULL,
+    XmNx, 300,
+    XmNy, 150,
     NULL
   );
 
@@ -165,8 +167,10 @@ MainWindow::MainWindow(int argc, char **argv)
     "drawingArea",
     xmDrawingAreaWidgetClass,
     m_frame,
-    XmNwidth, 200,
-    XmNheight, 100,
+    XmNwidth, 500,
+    XmNheight, 300,
+    XmNminHeight, 150,
+    XmNminWidth, 150,
     NULL
   );
 
@@ -209,6 +213,9 @@ MainWindow::MainWindow(int argc, char **argv)
   XtAddCallback(m_menu_exit_btn, XmNactivateCallback, &MainWindow::QuitCB, 0);
 
   XtRealizeWidget(m_top_level);
+
+  Colors::Init(m_top_level);
+  std::cout << "Colors: " << Colors::count() << std::endl;
 }
 
 MainWindow::~MainWindow()

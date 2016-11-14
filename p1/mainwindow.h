@@ -12,9 +12,11 @@
 #include <Xm/PushBG.h>
 #include <Xm/CascadeB.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
 
+#include "colors.h"
 #include "lines.h"
 
 class MainWindow
