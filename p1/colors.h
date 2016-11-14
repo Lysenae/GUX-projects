@@ -11,7 +11,7 @@
 class Colors
 {
 public:
-  static void Init(Widget shell);
+  static bool Init(Widget shell);
   static Pixel background();
   static Pixel foreground();
   static int count();

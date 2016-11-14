@@ -146,6 +146,13 @@ MainWindow::MainWindow(int argc, char **argv)
     NULL
   );
 
+  if(!Colors::Init(m_top_level))
+  {
+    std::cerr << "Failed to initialize colors!" << std::endl;
+    exit(1);
+  }
+  std::cout << "Colors: " << Colors::count() << std::endl;
+
   m_main_win = XtVaCreateManagedWidget(
     "mainWin",
     xmMainWindowWidgetClass,
@@ -171,6 +178,7 @@ MainWindow::MainWindow(int argc, char **argv)
     XmNheight, 300,
     XmNminHeight, 150,
     XmNminWidth, 150,
+    XmNbackground, Colors::background(),
     NULL
   );
 
@@ -213,9 +221,6 @@ MainWindow::MainWindow(int argc, char **argv)
   XtAddCallback(m_menu_exit_btn, XmNactivateCallback, &MainWindow::QuitCB, 0);
 
   XtRealizeWidget(m_top_level);
-
-  Colors::Init(m_top_level);
-  std::cout << "Colors: " << Colors::count() << std::endl;
 }
 
 MainWindow::~MainWindow()

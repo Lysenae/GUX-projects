@@ -6,7 +6,7 @@ std::vector<Pixel> Colors::m_colors;
 Pixel Colors::m_background;
 Pixel Colors::m_foreground;
 
-void Colors::Init(Widget shell)
+bool Colors::Init(Widget shell)
 {
   XColor col_screen, col_exact;
   XWindowAttributes win_attrs;
@@ -24,12 +24,14 @@ void Colors::Init(Widget shell)
     {
       std::cerr << "Failed to initialize color '" << m_color_names[i] <<
         "'" << std::endl;
-      return;
+      return false;
     }
     m_colors.push_back(col_screen.pixel);
   }
   m_background = m_colors[0];
   m_foreground = m_colors[1];
+
+  return true;
 }
 
 Pixel Colors::background()
