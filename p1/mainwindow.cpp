@@ -1,33 +1,24 @@
 // GUX Project #1 - Simple graphic editor
 
-#include <X11/Intrinsic.h>
-#include <Xm/Xm.h>
-#include <Xm/MainW.h>
-#include <Xm/Form.h>
-#include <Xm/Frame.h>
-#include <Xm/DrawingA.h>
-#include <Xm/PushB.h>
-#include <Xm/RowColumn.h>
+#include "mainwindow.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#define LINES_ALLOC_STEP 10 // memory allocation stepping
-
-XSegment *lines    = NULL;  // array of line descriptors
-int maxlines       = 0;     // space allocated for max lines
-int nlines         = 0;     // current number of lines
-
-GC drawGC          = 0;     // GC used for final drawing
-GC inputGC         = 0;     // GC used for drawing current position
-int button_pressed = 0;     // input state
-
-int x1, y1, x2, y2;         // input points
+// Init static variables
+XSegment *MainWindow::lines    = NULL;
+int MainWindow::maxlines       = 0;
+int MainWindow::nlines         = 0;
+GC MainWindow::drawGC          = 0;
+GC MainWindow::inputGC         = 0;
+int MainWindow::button_pressed = 0;
+int MainWindow::x1             = 0;
+int MainWindow::x2             = 0;
+int MainWindow::y1             = 0;
+int MainWindow::y2             = 0;
 
 /**
  * InputLineEH
  **/
-void InputLineEH(Widget w, XtPointer client_data, XEvent *event, Boolean *cont)
+void MainWindow::InputLineEH(Widget w, XtPointer client_data, XEvent *event,
+Boolean *cont)
 {
   Pixel fg, bg;
 
@@ -63,7 +54,7 @@ void InputLineEH(Widget w, XtPointer client_data, XEvent *event, Boolean *cont)
 /**
  * "DrawLine" callback function
  **/
-void DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data)
+void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
   Arg al[4];
   int ac;
@@ -86,7 +77,7 @@ void DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data)
     {
       if(d->event->xbutton.button == Button1)
       {
-        if (++nlines > maxlines)
+        if(++nlines > maxlines)
         {
           maxlines += LINES_ALLOC_STEP;
           lines = (XSegment*) XtRealloc((char*)lines,
@@ -120,7 +111,7 @@ void DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data)
 /**
  * "Expose" callback function
  **/
-void ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
+void MainWindow::ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
   if(nlines <= 0)
     return;
@@ -132,7 +123,7 @@ void ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
 /**
  * "Clear" button callback function
  **/
-void ClearCB(Widget w, XtPointer client_data, XtPointer call_data)
+void MainWindow::ClearCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
   Widget wcd = (Widget) client_data;
 
@@ -143,7 +134,7 @@ void ClearCB(Widget w, XtPointer client_data, XtPointer call_data)
 /**
  * "Quit" button callback function
  **/
-void QuitCB(Widget w, XtPointer client_data, XtPointer call_data)
+void MainWindow::QuitCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
   exit(0);
 }
@@ -151,9 +142,8 @@ void QuitCB(Widget w, XtPointer client_data, XtPointer call_data)
 /**
  * Main
  **/
-int main(int argc, char **argv)
+MainWindow::MainWindow(int argc, char **argv)
 {
-  XtAppContext app_context;
   Widget topLevel, mainWin, frame, drawArea, rowColumn, quitBtn, clearBtn;
 
   XtSetLanguageProc(NULL, (XtLanguageProc)NULL, NULL);
@@ -216,16 +206,22 @@ int main(int argc, char **argv)
 
   XmMainWindowSetAreas(mainWin, NULL, rowColumn, NULL, NULL, frame);
 
-  XtAddCallback(drawArea, XmNinputCallback, DrawLineCB, drawArea);
+  XtAddCallback(drawArea, XmNinputCallback, &MainWindow::DrawLineCB, drawArea);
   XtAddEventHandler(drawArea, ButtonMotionMask, False, InputLineEH, NULL);
-  XtAddCallback(drawArea, XmNexposeCallback, ExposeCB, drawArea);
+  XtAddCallback(drawArea, XmNexposeCallback, &MainWindow::ExposeCB, drawArea);
 
-  XtAddCallback(clearBtn, XmNactivateCallback, ClearCB, drawArea);
-  XtAddCallback(quitBtn, XmNactivateCallback, QuitCB, 0);
+  XtAddCallback(clearBtn, XmNactivateCallback, &MainWindow::ClearCB, drawArea);
+  XtAddCallback(quitBtn, XmNactivateCallback, &MainWindow::QuitCB, 0);
 
   XtRealizeWidget(topLevel);
+}
 
+MainWindow::~MainWindow()
+{
+}
+
+int MainWindow::run()
+{
   XtAppMainLoop(app_context);
-
   return 0;
 }

@@ -2,13 +2,17 @@
 #include <Motif.tmpl>
 #include <Motif.rules>
 
-CC=gcc
+TARGET = editor
+SRCS = editor.c mainwindow.c
+OBJS = editor.o mainwindow.o
+
+CC=g++
 CCOPTIONS=-O -Wall -fno-builtin
 CDEBUGFLAGS=-g
 
 LOCAL_LIBRARIES = XmClientLibs
 
-MSimpleProgramTarget(draw)
+MComplexProgramTarget($(TARGET), $(LOCAL_LIBRARIES), NullParameter)
 
 clean::
 	$(RM) Makefile
