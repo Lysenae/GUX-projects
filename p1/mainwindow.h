@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define LINES_ALLOC_STEP 10 // memory allocation stepping
+#include "shapes.h"
 
 class MainWindow
 {
@@ -30,9 +30,7 @@ public:
     Boolean *cont);
 
 private:
-  static XSegment *lines;    // array of line descriptors
-  static int maxlines;       // space allocated for max lines
-  static int nlines;         // current number of lines
+  static Lines *lines;    // array of line descriptors
   static GC drawGC;          // GC used for final drawing
   static GC inputGC;         // GC used for drawing current position
   static int button_pressed; // input state

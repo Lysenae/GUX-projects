@@ -3,9 +3,7 @@
 #include "mainwindow.h"
 
 // Init static variables
-XSegment *MainWindow::lines    = NULL;
-int MainWindow::maxlines       = 0;
-int MainWindow::nlines         = 0;
+Lines *MainWindow::lines       = new Lines();
 GC MainWindow::drawGC          = 0;
 GC MainWindow::inputGC         = 0;
 int MainWindow::button_pressed = 0;
@@ -77,18 +75,7 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
     {
       if(d->event->xbutton.button == Button1)
       {
-        if(++nlines > maxlines)
-        {
-          maxlines += LINES_ALLOC_STEP;
-          lines = (XSegment*) XtRealloc((char*)lines,
-            (Cardinal)(sizeof(XSegment) * maxlines));
-        }
-
-        lines[nlines - 1].x1 = x1;
-        lines[nlines - 1].y1 = y1;
-        lines[nlines - 1].x2 = d->event->xbutton.x;
-        lines[nlines - 1].y2 = d->event->xbutton.y;
-
+        lines->add(x1, y1, d->event->xbutton.x, d->event->xbutton.y);
         button_pressed = 0;
 
         if(!drawGC)
@@ -113,11 +100,13 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
  **/
 void MainWindow::ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  if(nlines <= 0)
+  if(lines->count() <= 0)
     return;
   if(!drawGC)
     drawGC = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
-  XDrawSegments(XtDisplay(w), XtWindow(w), drawGC, lines, nlines);
+
+  XDrawSegments(XtDisplay(w), XtWindow(w), drawGC, lines->lines(),
+    lines->count());
 }
 
 /**
@@ -127,7 +116,7 @@ void MainWindow::ClearCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
   Widget wcd = (Widget) client_data;
 
-  nlines = 0;
+  lines->clear();
   XClearWindow(XtDisplay(wcd), XtWindow(wcd));
 }
 
@@ -218,6 +207,7 @@ MainWindow::MainWindow(int argc, char **argv)
 
 MainWindow::~MainWindow()
 {
+  delete lines;
 }
 
 int MainWindow::run()
