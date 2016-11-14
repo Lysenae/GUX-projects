@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "shapes.h"
+#include "lines.h"
 
 class MainWindow
 {

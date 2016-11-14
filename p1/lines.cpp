@@ -1,4 +1,4 @@
-#include "shapes.h"
+#include "lines.h"
 
 Lines::Lines()
 {

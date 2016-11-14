@@ -1,5 +1,5 @@
-#ifndef SHAPES_H
-#define SHAPES_H
+#ifndef LINES_H
+#define LINES_H
 
 #include <X11/Intrinsic.h>
 
@@ -21,4 +21,4 @@ private:
   int m_max;
 };
 
-#endif // SHAPES_H
+#endif // LINES_H
