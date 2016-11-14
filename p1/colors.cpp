@@ -1,7 +1,7 @@
 #include "colors.h"
 
 // Initialize static variables/structures
-std::vector<std::string> Colors::m_color_names = InitColorNames();
+std::vector<std::string> Colors::m_color_names = InitNames();
 std::vector<Pixel> Colors::m_colors;
 Pixel Colors::m_background;
 Pixel Colors::m_foreground;
@@ -66,7 +66,7 @@ std::vector<std::string> Colors::Names()
   return m_color_names;
 }
 
-std::vector<std::string> Colors::InitColorNames()
+std::vector<std::string> Colors::InitNames()
 {
   std::vector<std::string> v;
   v.push_back("white");

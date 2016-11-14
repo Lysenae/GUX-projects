@@ -25,7 +25,7 @@ private:
   static Pixel m_background;
   static Pixel m_foreground;
 
-  static std::vector<std::string> InitColorNames();
+  static std::vector<std::string> InitNames();
 };
 
 #endif // COLORS_H
