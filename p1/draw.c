@@ -1,10 +1,9 @@
 // GUX Project #1 - Simple graphic editor
 
 #include <X11/Intrinsic.h>
-#include <Xm/Xm.h> 
-
-#include <Xm/MainW.h> 
-#include <Xm/Form.h> 
+#include <Xm/Xm.h>
+#include <Xm/MainW.h>
+#include <Xm/Form.h>
 #include <Xm/Frame.h>
 #include <Xm/DrawingA.h>
 #include <Xm/PushB.h>
@@ -201,7 +200,7 @@ int main(int argc, char **argv)
     XmNpacking, XmPACK_COLUMN,
     NULL
   );
-    
+
   clearBtn = XtVaCreateManagedWidget("Clear",
     xmPushButtonWidgetClass,
     rowColumn,
