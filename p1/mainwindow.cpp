@@ -15,7 +15,12 @@ Widget MainWindow::m_shape_point   = 0;
 Widget MainWindow::m_shape_line    = 0;
 Widget MainWindow::m_shape_rect    = 0;
 Widget MainWindow::m_shape_ellipse = 0;
+Widget MainWindow::m_border_full   = 0;
+Widget MainWindow::m_border_dotted = 0;
+Widget MainWindow::m_fill_btn      = 0;
 int MainWindow::m_shape            = MainWindow::SHAPE_POINT;
+int MainWindow::m_border           = MainWindow::BORDER_FULL;
+bool MainWindow::m_fill            = false;
 
 /**
  * InputLineEH
@@ -136,7 +141,6 @@ void MainWindow::QuitCB(Widget w, XtPointer client_data, XtPointer call_data)
 void MainWindow::OnShapeToggled(Widget w, XtPointer client_data,
 XtPointer call_data)
 {
-  int x;
   if(w == m_shape_point)
   {
     XmToggleButtonSetState(m_shape_point, True, False);
@@ -175,6 +179,44 @@ XtPointer call_data)
   }
 
   std::cout << "Shape ID: " << m_shape << std::endl;
+}
+
+void MainWindow::OnBorderToggled(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  if(w == m_border_full)
+  {
+    XmToggleButtonSetState(m_border_full, True, False);
+    XmToggleButtonSetState(m_border_dotted, False, False);
+    m_border = BORDER_FULL;
+  }
+  else if(w == m_border_dotted)
+  {
+    XmToggleButtonSetState(m_border_full, False, False);
+    XmToggleButtonSetState(m_border_dotted, True, False);
+    m_border = BORDER_DOTTED;
+  }
+  else
+  {
+    std::cerr << "Invalid border type ID" << std::endl;
+  }
+
+  std::cout << "Border: " << m_border << std::endl;
+}
+
+void MainWindow::OnFillToggled(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  if(XmToggleButtonGetState(w) == True)
+  {
+    m_fill = true;
+  }
+  else
+  {
+    m_fill = false;
+  }
+
+  std::cout << "Fill: " << m_fill << std::endl;
 }
 
 /**
@@ -232,9 +274,29 @@ MainWindow::MainWindow(int argc, char **argv)
   );
 
   m_tools = XtVaCreateManagedWidget(
-    "rowColumn",
+    "tools",
     xmRowColumnWidgetClass,
     m_main_win,
+    XmNentryAlignment, XmALIGNMENT_BEGINNING,
+    XmNorientation, XmVERTICAL,
+    XmNpacking, XmPACK_TIGHT,
+    NULL
+  );
+
+  m_tools_shapes = XtVaCreateManagedWidget(
+    "toolsShapes",
+    xmRowColumnWidgetClass,
+    m_tools,
+    XmNentryAlignment, XmALIGNMENT_CENTER,
+    XmNorientation, XmHORIZONTAL,
+    XmNpacking, XmPACK_COLUMN,
+    NULL
+  );
+
+  m_tools_border_fill = XtVaCreateManagedWidget(
+    "toolsBorderFill",
+    xmRowColumnWidgetClass,
+    m_tools,
     XmNentryAlignment, XmALIGNMENT_CENTER,
     XmNorientation, XmHORIZONTAL,
     XmNpacking, XmPACK_COLUMN,
@@ -307,7 +369,7 @@ void MainWindow::CreateTools()
   m_shape_point = XtVaCreateManagedWidget(
     "Point",
     xmToggleButtonWidgetClass,
-    m_tools,
+    m_tools_shapes,
     NULL
   );
   XtAddCallback(m_shape_point, XmNvalueChangedCallback, OnShapeToggled, NULL);
@@ -316,7 +378,7 @@ void MainWindow::CreateTools()
   m_shape_line = XtVaCreateManagedWidget(
     "Line",
     xmToggleButtonWidgetClass,
-    m_tools,
+    m_tools_shapes,
     NULL
   );
   XtAddCallback(m_shape_line, XmNvalueChangedCallback, OnShapeToggled, NULL);
@@ -324,7 +386,7 @@ void MainWindow::CreateTools()
   m_shape_rect = XtVaCreateManagedWidget(
     "Rectangle",
     xmToggleButtonWidgetClass,
-    m_tools,
+    m_tools_shapes,
     NULL
   );
   XtAddCallback(m_shape_rect, XmNvalueChangedCallback, OnShapeToggled, NULL);
@@ -332,8 +394,33 @@ void MainWindow::CreateTools()
   m_shape_ellipse = XtVaCreateManagedWidget(
     "Ellipse",
     xmToggleButtonWidgetClass,
-    m_tools,
+    m_tools_shapes,
     NULL
   );
   XtAddCallback(m_shape_ellipse, XmNvalueChangedCallback, OnShapeToggled, NULL);
+
+  m_border_full = XtVaCreateManagedWidget(
+    "Full line",
+    xmToggleButtonWidgetClass,
+    m_tools_border_fill,
+    NULL
+  );
+  XtAddCallback(m_border_full, XmNvalueChangedCallback, OnBorderToggled, NULL);
+  XmToggleButtonSetState(m_border_full, True, False);
+
+  m_border_dotted = XtVaCreateManagedWidget(
+    "Dotted line",
+    xmToggleButtonWidgetClass,
+    m_tools_border_fill,
+    NULL
+  );
+  XtAddCallback(m_border_dotted, XmNvalueChangedCallback, OnBorderToggled, NULL);
+
+  m_fill_btn = XtVaCreateManagedWidget(
+    "Fill rectangle/ellipse",
+    xmToggleButtonWidgetClass,
+    m_tools_border_fill,
+    NULL
+  );
+  XtAddCallback(m_fill_btn, XmNvalueChangedCallback, OnFillToggled, NULL);
 }

@@ -35,6 +35,10 @@ public:
     Boolean *cont);
   static void OnShapeToggled(Widget w, XtPointer client_data,
     XtPointer call_data);
+  static void OnBorderToggled(Widget w, XtPointer client_data,
+    XtPointer call_data);
+  static void OnFillToggled(Widget w, XtPointer client_data,
+    XtPointer call_data);
 
 private:
   static Lines *m_lines;       // array of line descriptors
@@ -47,13 +51,19 @@ private:
   static const int SHAPE_LINE    = 1;
   static const int SHAPE_RECT    = 2;
   static const int SHAPE_ELLIPSE = 3;
+  static const int BORDER_FULL   = 0;
+  static const int BORDER_DOTTED = 1;
   static int m_shape;
+  static int m_border;
+  static bool m_fill;
 
   Widget m_top_level;
   Widget m_main_win;
   Widget m_frame;
   Widget m_draw_area;
   Widget m_tools;
+  Widget m_tools_shapes;
+  Widget m_tools_border_fill;
 
   // Menu
   Widget   m_menu_bar;
@@ -66,11 +76,13 @@ private:
   XmString m_menu_accel;
 
   // Tools
-  std::vector<Widget> m_shape_tbtns;
   static Widget m_shape_point;
   static Widget m_shape_line;
   static Widget m_shape_rect;
   static Widget m_shape_ellipse;
+  static Widget m_border_full;
+  static Widget m_border_dotted;
+  static Widget m_fill_btn;
 
   XtAppContext m_app_context;
 
