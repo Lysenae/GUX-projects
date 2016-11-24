@@ -3,10 +3,10 @@
 #include "mainwindow.h"
 
 // Init static variables
-Lines *MainWindow::lines       = new Lines();
-GC MainWindow::drawGC          = 0;
-GC MainWindow::inputGC         = 0;
-int MainWindow::button_pressed = 0;
+Lines *MainWindow::m_lines       = new Lines();
+GC MainWindow::m_draw_gc          = 0;
+GC MainWindow::m_input_gc         = 0;
+int MainWindow::m_button_pressed = 0;
 int MainWindow::x1             = 0;
 int MainWindow::x2             = 0;
 int MainWindow::y1             = 0;
@@ -20,32 +20,32 @@ Boolean *cont)
 {
   Pixel fg, bg;
 
-  if(button_pressed)
+  if(m_button_pressed)
   {
-    if(!inputGC)
+    if(!m_input_gc)
     {
-      inputGC = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
-      XSetFunction(XtDisplay(w), inputGC, GXxor);
-      XSetPlaneMask(XtDisplay(w), inputGC, ~0);
+      m_input_gc = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
+      XSetFunction(XtDisplay(w), m_input_gc, GXxor);
+      XSetPlaneMask(XtDisplay(w), m_input_gc, ~0);
       XtVaGetValues(w, XmNforeground, &fg, XmNbackground, &bg, NULL);
-      XSetForeground(XtDisplay(w), inputGC, fg ^ bg);
+      XSetForeground(XtDisplay(w), m_input_gc, fg ^ bg);
     }
 
-    if(button_pressed > 1)
+    if(m_button_pressed > 1)
     {
       /* erase previous position */
-      XDrawLine(XtDisplay(w), XtWindow(w), inputGC, x1, y1, x2, y2);
+      XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
     }
     else
     {
       /* remember first MotionNotify */
-      button_pressed = 2;
+      m_button_pressed = 2;
     }
 
     x2 = event->xmotion.x;
     y2 = event->xmotion.y;
 
-    XDrawLine(XtDisplay(w), XtWindow(w), inputGC, x1, y1, x2, y2);
+    XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
   }
 }
 
@@ -65,7 +65,7 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
     {
       if (d->event->xbutton.button == Button1)
       {
-        button_pressed = 1;
+        m_button_pressed = 1;
         x1 = d->event->xbutton.x;
         y1 = d->event->xbutton.y;
       }
@@ -75,18 +75,18 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
     {
       if(d->event->xbutton.button == Button1)
       {
-        lines->add(x1, y1, d->event->xbutton.x, d->event->xbutton.y);
-        button_pressed = 0;
+        m_lines->add(x1, y1, d->event->xbutton.x, d->event->xbutton.y);
+        m_button_pressed = 0;
 
-        if(!drawGC)
+        if(!m_draw_gc)
         {
           ac = 0;
           XtSetArg(al[ac], XmNforeground, &v.foreground); ac++;
           XtGetValues(w, al, ac);
-          drawGC = XCreateGC(XtDisplay(w), XtWindow(w),
+          m_draw_gc = XCreateGC(XtDisplay(w), XtWindow(w),
           GCForeground, &v);
         }
-        XDrawLine(XtDisplay(w), XtWindow(w), drawGC,
+        XDrawLine(XtDisplay(w), XtWindow(w), m_draw_gc,
           x1, y1, d->event->xbutton.x, d->event->xbutton.y
         );
       }
@@ -100,13 +100,13 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
  **/
 void MainWindow::ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  if(lines->count() <= 0)
+  if(m_lines->count() <= 0)
     return;
-  if(!drawGC)
-    drawGC = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
+  if(!m_draw_gc)
+    m_draw_gc = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
 
-  XDrawSegments(XtDisplay(w), XtWindow(w), drawGC, lines->lines(),
-    lines->count());
+  XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, m_lines->lines(),
+    m_lines->count());
 }
 
 /**
@@ -116,7 +116,7 @@ void MainWindow::ClearCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
   Widget wcd = (Widget) client_data;
 
-  lines->clear();
+  m_lines->clear();
   XClearWindow(XtDisplay(wcd), XtWindow(wcd));
 }
 
@@ -182,7 +182,7 @@ MainWindow::MainWindow(int argc, char **argv)
     NULL
   );
 
-  m_row_column = XtVaCreateManagedWidget(
+  m_tools = XtVaCreateManagedWidget(
     "rowColumn",
     xmRowColumnWidgetClass,
     m_main_win,
@@ -195,18 +195,18 @@ MainWindow::MainWindow(int argc, char **argv)
   m_clear_btn = XtVaCreateManagedWidget(
     "Clear",
     xmPushButtonWidgetClass,
-    m_row_column,
+    m_tools,
     NULL
   );
 
   m_quit_btn = XtVaCreateManagedWidget(
     "Quit",
     xmPushButtonWidgetClass,
-    m_row_column,
+    m_tools,
     NULL
   );
 
-  XmMainWindowSetAreas(m_main_win, NULL, m_row_column, NULL, NULL, m_frame);
+  XmMainWindowSetAreas(m_main_win, NULL, m_tools, NULL, NULL, m_frame);
 
   XtAddCallback(m_draw_area, XmNinputCallback, &MainWindow::DrawLineCB, m_draw_area);
   XtAddEventHandler(m_draw_area, ButtonMotionMask, False, InputLineEH, NULL);
@@ -225,7 +225,7 @@ MainWindow::MainWindow(int argc, char **argv)
 
 MainWindow::~MainWindow()
 {
-  delete lines;
+  delete m_lines;
 }
 
 int MainWindow::run()
