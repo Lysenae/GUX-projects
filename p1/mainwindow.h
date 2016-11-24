@@ -12,6 +12,9 @@
 #include <Xm/PushBG.h>
 #include <Xm/CascadeB.h>
 #include <Xm/ToggleB.h>
+#include <Xm/ComboBox.h>
+#include <Xm/Scale.h>
+#include <Xm/Label.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -39,6 +42,10 @@ public:
     XtPointer call_data);
   static void OnFillToggled(Widget w, XtPointer client_data,
     XtPointer call_data);
+  static void OnColorChanged(Widget w, XtPointer client_data,
+    XtPointer call_data);
+  static void OnLineWidthChanged(Widget w, XtPointer client_data,
+    XtPointer call_data);
 
 private:
   static Lines *m_lines;       // array of line descriptors
@@ -56,6 +63,7 @@ private:
   static int m_shape;
   static int m_border;
   static bool m_fill;
+  static int m_line_width;
 
   Widget m_top_level;
   Widget m_main_win;
@@ -63,7 +71,8 @@ private:
   Widget m_draw_area;
   Widget m_tools;
   Widget m_tools_shapes;
-  Widget m_tools_border_fill;
+  Widget m_tools_border;
+  Widget m_tools_style;
 
   // Menu
   Widget   m_menu_bar;
@@ -83,6 +92,11 @@ private:
   static Widget m_border_full;
   static Widget m_border_dotted;
   static Widget m_fill_btn;
+  static Widget m_line_width_sc;
+  static Widget m_fg_cb;
+  static Widget m_bg_cb;
+  Widget m_fg_label;
+  Widget m_bg_label;
 
   XtAppContext m_app_context;
 

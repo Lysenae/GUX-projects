@@ -66,6 +66,11 @@ std::vector<std::string> Colors::Names()
   return m_color_names;
 }
 
+std::string Colors::Name(unsigned int i)
+{
+  return m_color_names[i];
+}
+
 std::vector<std::string> Colors::InitNames()
 {
   std::vector<std::string> v;

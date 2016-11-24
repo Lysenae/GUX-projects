@@ -7,6 +7,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <cstring>
 
 class Colors
 {
@@ -18,6 +19,7 @@ public:
   static void SetForeground(unsigned int i);
   static int Count();
   static std::vector<std::string> Names();
+  static std::string Name(unsigned int i);
 
 private:
   static std::vector<std::string> m_color_names;

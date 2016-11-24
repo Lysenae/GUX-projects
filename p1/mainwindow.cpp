@@ -18,9 +18,13 @@ Widget MainWindow::m_shape_ellipse = 0;
 Widget MainWindow::m_border_full   = 0;
 Widget MainWindow::m_border_dotted = 0;
 Widget MainWindow::m_fill_btn      = 0;
+Widget MainWindow::m_line_width_sc = 0;
+Widget MainWindow::m_fg_cb         = 0;
+Widget MainWindow::m_bg_cb         = 0;
 int MainWindow::m_shape            = MainWindow::SHAPE_POINT;
 int MainWindow::m_border           = MainWindow::BORDER_FULL;
 bool MainWindow::m_fill            = false;
+int MainWindow::m_line_width       = 1;
 
 /**
  * InputLineEH
@@ -178,7 +182,7 @@ XtPointer call_data)
     std::cerr << "Invalid shape button ID" << std::endl;
   }
 
-  std::cout << "Shape ID: " << m_shape << std::endl;
+  std::cout << "Shape: " << m_shape << std::endl;
 }
 
 void MainWindow::OnBorderToggled(Widget w, XtPointer client_data,
@@ -217,6 +221,35 @@ XtPointer call_data)
   }
 
   std::cout << "Fill: " << m_fill << std::endl;
+}
+
+void MainWindow::OnColorChanged(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  XmComboBoxCallbackStruct *cbcs = (XmComboBoxCallbackStruct*)call_data;
+  unsigned int item = (unsigned int)cbcs->item_position;
+  if(w == m_fg_cb)
+  {
+    Colors::SetForeground(item);
+    std::cout << "FG: " << Colors::Name(item) << std::endl;
+  }
+  else if(w == m_bg_cb)
+  {
+    Colors::SetBackground(item);
+    std::cout << "BG: " << Colors::Name(item) << std::endl;
+  }
+  else
+  {
+    std::cerr << "Invalid color type changed" << std::endl;
+  }
+}
+
+void MainWindow::OnLineWidthChanged(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  XmScaleCallbackStruct *cbcs = (XmScaleCallbackStruct*)call_data;
+  m_line_width = cbcs->value;
+  std::cout << "Line Width: " << m_line_width << std::endl;
 }
 
 /**
@@ -293,13 +326,23 @@ MainWindow::MainWindow(int argc, char **argv)
     NULL
   );
 
-  m_tools_border_fill = XtVaCreateManagedWidget(
-    "toolsBorderFill",
+  m_tools_border = XtVaCreateManagedWidget(
+    "toolsBorder",
     xmRowColumnWidgetClass,
     m_tools,
     XmNentryAlignment, XmALIGNMENT_CENTER,
     XmNorientation, XmHORIZONTAL,
     XmNpacking, XmPACK_COLUMN,
+    NULL
+  );
+
+  m_tools_style = XtVaCreateManagedWidget(
+    "toolsStyle",
+    xmRowColumnWidgetClass,
+    m_tools,
+    XmNentryAlignment, XmALIGNMENT_CENTER,
+    XmNorientation, XmHORIZONTAL,
+    XmNpacking, XmPACK_TIGHT,
     NULL
   );
 
@@ -331,7 +374,7 @@ int MainWindow::run()
 
 void MainWindow::CreateMenu()
 {
-  Arg args[4];
+  Arg args[3];
 
   m_menu_bar   = XmCreateMenuBar(m_main_win, (char*)"MenuBar", NULL, 0);
   m_menu       = XmCreatePulldownMenu(m_menu_bar, (char*)"FileMenu", NULL, 0);
@@ -366,6 +409,8 @@ void MainWindow::CreateMenu()
 
 void MainWindow::CreateTools()
 {
+  XmString label;
+
   m_shape_point = XtVaCreateManagedWidget(
     "Point",
     xmToggleButtonWidgetClass,
@@ -402,7 +447,7 @@ void MainWindow::CreateTools()
   m_border_full = XtVaCreateManagedWidget(
     "Full line",
     xmToggleButtonWidgetClass,
-    m_tools_border_fill,
+    m_tools_border,
     NULL
   );
   XtAddCallback(m_border_full, XmNvalueChangedCallback, OnBorderToggled, NULL);
@@ -411,15 +456,83 @@ void MainWindow::CreateTools()
   m_border_dotted = XtVaCreateManagedWidget(
     "Dotted line",
     xmToggleButtonWidgetClass,
-    m_tools_border_fill,
+    m_tools_border,
     NULL
   );
   XtAddCallback(m_border_dotted, XmNvalueChangedCallback, OnBorderToggled, NULL);
 
+  Arg args[7];
+  label = XmStringCreateSimple((char*)"Line Width");
+  XtSetArg(args[0],XmNtitleString, label);
+  XtSetArg(args[1],XmNorientation, XmHORIZONTAL);
+  XtSetArg(args[2],XmNshowValue, True);
+  XtSetArg(args[3],XmNmaximum, 10);
+  XtSetArg(args[4],XmNminimum, 0);
+  XtSetArg(args[5],XmNhighlightOnEnter, True);
+  XtSetArg(args[6],XmNvalue, 1);
+
+  m_line_width_sc = XmCreateScale(m_tools_border, (char*)"lineWidthScale",
+    args, 7);
+  XtManageChild(m_line_width_sc);
+  XtAddCallback(m_line_width_sc, XmNdragCallback, OnLineWidthChanged, NULL);
+  XtAddCallback(m_line_width_sc, XmNvalueChangedCallback,
+    OnLineWidthChanged, NULL);
+
+  std::vector<std::string> col_names = Colors::Names();
+  XmString colors[Colors::Count()];
+  for(int i=0; i<Colors::Count(); ++i)
+  {
+    colors[i] = XmStringCreateLocalized((char*)col_names[i].c_str());
+  }
+
+  label = XmStringCreateSimple((char*)"FG:");
+  m_fg_label = XtVaCreateManagedWidget(
+    "foregroundLabel",
+    xmLabelWidgetClass,
+    m_tools_style,
+    XmNlabelString, label,
+    NULL
+  );
+  XmStringFree(label);
+
+
+  m_fg_cb = XtVaCreateManagedWidget(
+    "foregroundColor",
+    xmComboBoxWidgetClass,
+    m_tools_style,
+    XmNcomboBoxType, XmDROP_DOWN_LIST,
+    XmNitemCount, Colors::Count(),
+    XmNitems, colors,
+    XmNselectedPosition, 1,
+    NULL
+  );
+  XtAddCallback(m_fg_cb, XmNselectionCallback, OnColorChanged, NULL);
+
+  label = XmStringCreateSimple((char*)"BG:");
+  m_fg_label = XtVaCreateManagedWidget(
+    "backgroundLabel",
+    xmLabelWidgetClass,
+    m_tools_style,
+    XmNlabelString, label,
+    NULL
+  );
+  XmStringFree(label);
+
+  m_bg_cb = XtVaCreateManagedWidget(
+    "backgroundColor",
+    xmComboBoxWidgetClass,
+    m_tools_style,
+    XmNcomboBoxType, XmDROP_DOWN_LIST,
+    XmNitemCount, Colors::Count(),
+    XmNitems, colors,
+    NULL
+  );
+  XtAddCallback(m_bg_cb, XmNselectionCallback, OnColorChanged, NULL);
+
   m_fill_btn = XtVaCreateManagedWidget(
     "Fill rectangle/ellipse",
     xmToggleButtonWidgetClass,
-    m_tools_border_fill,
+    m_tools_style,
     NULL
   );
   XtAddCallback(m_fill_btn, XmNvalueChangedCallback, OnFillToggled, NULL);
