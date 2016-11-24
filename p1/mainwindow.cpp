@@ -3,14 +3,18 @@
 #include "mainwindow.h"
 
 // Init static variables
-Lines *MainWindow::m_lines       = new Lines();
-GC MainWindow::m_draw_gc          = 0;
-GC MainWindow::m_input_gc         = 0;
-int MainWindow::m_button_pressed = 0;
-int MainWindow::x1             = 0;
-int MainWindow::x2             = 0;
-int MainWindow::y1             = 0;
-int MainWindow::y2             = 0;
+Lines *MainWindow::m_lines         = new Lines();
+GC MainWindow::m_draw_gc           = 0;
+GC MainWindow::m_input_gc          = 0;
+int MainWindow::m_button_pressed   = 0;
+int MainWindow::x1                 = 0;
+int MainWindow::x2                 = 0;
+int MainWindow::y1                 = 0;
+int MainWindow::y2                 = 0;
+Widget MainWindow::m_shape_point   = 0;
+Widget MainWindow::m_shape_line    = 0;
+Widget MainWindow::m_shape_rect    = 0;
+Widget MainWindow::m_shape_ellipse = 0;
 
 /**
  * InputLineEH
@@ -128,6 +132,24 @@ void MainWindow::QuitCB(Widget w, XtPointer client_data, XtPointer call_data)
   exit(0);
 }
 
+void MainWindow::OnShapeToggled(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  int x;
+  if(w == m_shape_point)
+    x = SHAPE_POINT;
+  else if(w == m_shape_line)
+    x = SHAPE_LINE;
+  else if(w == m_shape_rect)
+    x= SHAPE_RECT;
+  else if(w == m_shape_ellipse)
+    x = SHAPE_ELLIPSE;
+  else
+    x = 100;
+
+  std::cout << "X: " << x << std::endl;
+}
+
 /**
  * Main
  **/
@@ -191,6 +213,8 @@ MainWindow::MainWindow(int argc, char **argv)
     XmNpacking, XmPACK_COLUMN,
     NULL
   );
+
+  CreateTools();
 
   m_clear_btn = XtVaCreateManagedWidget(
     "Clear",
@@ -257,4 +281,39 @@ void MainWindow::CreateMenu()
     XtVaCreateManagedWidget("Exit", xmPushButtonGadgetClass, m_menu_w, NULL);
 
   XtManageChild(m_menu_bar);
+}
+
+void MainWindow::CreateTools()
+{
+  m_shape_point = XtVaCreateManagedWidget(
+    "Point",
+    xmToggleButtonWidgetClass,
+    m_tools,
+    NULL
+  );
+  XtAddCallback(m_shape_point, XmNvalueChangedCallback, OnShapeToggled, NULL);
+
+  m_shape_line = XtVaCreateManagedWidget(
+    "Line",
+    xmToggleButtonWidgetClass,
+    m_tools,
+    NULL
+  );
+  XtAddCallback(m_shape_line, XmNvalueChangedCallback, OnShapeToggled, NULL);
+
+  m_shape_rect = XtVaCreateManagedWidget(
+    "Rectangle",
+    xmToggleButtonWidgetClass,
+    m_tools,
+    NULL
+  );
+  XtAddCallback(m_shape_rect, XmNvalueChangedCallback, OnShapeToggled, NULL);
+
+  m_shape_ellipse = XtVaCreateManagedWidget(
+    "Ellipse",
+    xmToggleButtonWidgetClass,
+    m_tools,
+    NULL
+  );
+  XtAddCallback(m_shape_ellipse, XmNvalueChangedCallback, OnShapeToggled, NULL);
 }
