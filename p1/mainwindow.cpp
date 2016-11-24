@@ -243,29 +243,11 @@ MainWindow::MainWindow(int argc, char **argv)
 
   CreateTools();
 
-  m_clear_btn = XtVaCreateManagedWidget(
-    "Clear",
-    xmPushButtonWidgetClass,
-    m_tools,
-    NULL
-  );
-
-  m_quit_btn = XtVaCreateManagedWidget(
-    "Quit",
-    xmPushButtonWidgetClass,
-    m_tools,
-    NULL
-  );
-
   XmMainWindowSetAreas(m_main_win, NULL, m_tools, NULL, NULL, m_frame);
 
   XtAddCallback(m_draw_area, XmNinputCallback, &MainWindow::DrawLineCB, m_draw_area);
   XtAddEventHandler(m_draw_area, ButtonMotionMask, False, InputLineEH, NULL);
   XtAddCallback(m_draw_area, XmNexposeCallback, &MainWindow::ExposeCB, m_draw_area);
-
-  XtAddCallback(m_clear_btn, XmNactivateCallback, &MainWindow::ClearCB,
-    m_draw_area);
-  XtAddCallback(m_quit_btn, XmNactivateCallback, &MainWindow::QuitCB, 0);
 
   XtAddCallback(m_menu_clear_btn, XmNactivateCallback, &MainWindow::ClearCB,
     m_draw_area);

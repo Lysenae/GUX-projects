@@ -54,8 +54,6 @@ private:
   Widget m_frame;
   Widget m_draw_area;
   Widget m_tools;
-  Widget m_quit_btn;
-  Widget m_clear_btn;
 
   // Menu
   Widget   m_menu_bar;
