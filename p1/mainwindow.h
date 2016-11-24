@@ -3,6 +3,7 @@
 
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
+#include <Xm/Protocols.h>
 #include <Xm/MainW.h>
 #include <Xm/Form.h>
 #include <Xm/Frame.h>
@@ -15,6 +16,7 @@
 #include <Xm/ComboBox.h>
 #include <Xm/Scale.h>
 #include <Xm/Label.h>
+#include <Xm/MessageB.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -22,6 +24,7 @@
 
 #include "colors.h"
 #include "lines.h"
+#include "quitdialog.h"
 
 class MainWindow
 {
@@ -30,7 +33,7 @@ public:
   ~MainWindow();
   int run();
 
-  static void QuitCB(Widget w, XtPointer client_data, XtPointer call_data);
+  static void OnQuit(Widget w, XtPointer client_data, XtPointer call_data);
   static void ClearCB(Widget w, XtPointer client_data, XtPointer call_data);
   static void ExposeCB(Widget w, XtPointer client_data, XtPointer call_data);
   static void DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data);
@@ -64,6 +67,10 @@ private:
   static int m_border;
   static bool m_fill;
   static int m_line_width;
+
+  static QuitDialog *m_quitdlg;
+
+  Atom wm_delete;
 
   Widget m_top_level;
   Widget m_main_win;
@@ -100,6 +107,7 @@ private:
 
   XtAppContext m_app_context;
 
+  void ShowQuitDialog();
   void CreateMenu();
   void CreateTools();
 };

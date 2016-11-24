@@ -4,6 +4,7 @@
 
 // Init static variables
 Lines *MainWindow::m_lines         = new Lines();
+QuitDialog *MainWindow::m_quitdlg  = 0;
 GC MainWindow::m_draw_gc           = 0;
 GC MainWindow::m_input_gc          = 0;
 int MainWindow::m_button_pressed   = 0;
@@ -137,9 +138,11 @@ void MainWindow::ClearCB(Widget w, XtPointer client_data, XtPointer call_data)
 /**
  * "Quit" button callback function
  **/
-void MainWindow::QuitCB(Widget w, XtPointer client_data, XtPointer call_data)
+void MainWindow::OnQuit(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  exit(0);
+  m_quitdlg->Show();
+  bool rslt = m_quitdlg->Result();
+  std::cout << "Result: " << rslt << std::endl;
 }
 
 void MainWindow::OnShapeToggled(Widget w, XtPointer client_data,
@@ -350,13 +353,19 @@ MainWindow::MainWindow(int argc, char **argv)
 
   XmMainWindowSetAreas(m_main_win, NULL, m_tools, NULL, NULL, m_frame);
 
-  XtAddCallback(m_draw_area, XmNinputCallback, &MainWindow::DrawLineCB, m_draw_area);
-  XtAddEventHandler(m_draw_area, ButtonMotionMask, False, InputLineEH, NULL);
-  XtAddCallback(m_draw_area, XmNexposeCallback, &MainWindow::ExposeCB, m_draw_area);
+  wm_delete = XInternAtom(XtDisplay(m_top_level), "WM_DELETE_WINDOW", False);
+  XmAddWMProtocolCallback(m_top_level, wm_delete, OnQuit, NULL);
+  XmActivateWMProtocol(m_top_level, wm_delete);
 
-  XtAddCallback(m_menu_clear_btn, XmNactivateCallback, &MainWindow::ClearCB,
+  XtAddCallback(m_draw_area, XmNinputCallback, DrawLineCB, m_draw_area);
+  XtAddEventHandler(m_draw_area, ButtonMotionMask, False, InputLineEH, NULL);
+  XtAddCallback(m_draw_area, XmNexposeCallback, ExposeCB, m_draw_area);
+
+  XtAddCallback(m_menu_clear_btn, XmNactivateCallback, ClearCB,
     m_draw_area);
-  XtAddCallback(m_menu_exit_btn, XmNactivateCallback, &MainWindow::QuitCB, 0);
+  XtAddCallback(m_menu_exit_btn, XmNactivateCallback, OnQuit, 0);
+
+  m_quitdlg = new QuitDialog(m_main_win);
 
   XtRealizeWidget(m_top_level);
 }
@@ -364,6 +373,7 @@ MainWindow::MainWindow(int argc, char **argv)
 MainWindow::~MainWindow()
 {
   delete m_lines;
+  delete m_quitdlg;
 }
 
 int MainWindow::run()
