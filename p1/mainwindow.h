@@ -47,6 +47,7 @@ private:
   static const int SHAPE_LINE    = 1;
   static const int SHAPE_RECT    = 2;
   static const int SHAPE_ELLIPSE = 3;
+  static int m_shape;
 
   Widget m_top_level;
   Widget m_main_win;

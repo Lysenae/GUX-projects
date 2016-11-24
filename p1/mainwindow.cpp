@@ -15,6 +15,7 @@ Widget MainWindow::m_shape_point   = 0;
 Widget MainWindow::m_shape_line    = 0;
 Widget MainWindow::m_shape_rect    = 0;
 Widget MainWindow::m_shape_ellipse = 0;
+int MainWindow::m_shape            = MainWindow::SHAPE_POINT;
 
 /**
  * InputLineEH
@@ -137,17 +138,43 @@ XtPointer call_data)
 {
   int x;
   if(w == m_shape_point)
-    x = SHAPE_POINT;
+  {
+    XmToggleButtonSetState(m_shape_point, True, False);
+    XmToggleButtonSetState(m_shape_line, False, False);
+    XmToggleButtonSetState(m_shape_rect, False, False);
+    XmToggleButtonSetState(m_shape_ellipse, False, False);
+    m_shape = SHAPE_POINT;
+  }
   else if(w == m_shape_line)
-    x = SHAPE_LINE;
+  {
+    XmToggleButtonSetState(m_shape_point, False, False);
+    XmToggleButtonSetState(m_shape_line, True, False);
+    XmToggleButtonSetState(m_shape_rect, False, False);
+    XmToggleButtonSetState(m_shape_ellipse, False, False);
+    m_shape = SHAPE_LINE;
+  }
   else if(w == m_shape_rect)
-    x= SHAPE_RECT;
+  {
+    XmToggleButtonSetState(m_shape_point, False, False);
+    XmToggleButtonSetState(m_shape_line, False, False);
+    XmToggleButtonSetState(m_shape_rect, True, False);
+    XmToggleButtonSetState(m_shape_ellipse, False, False);
+    m_shape = SHAPE_RECT;
+  }
   else if(w == m_shape_ellipse)
-    x = SHAPE_ELLIPSE;
+  {
+    XmToggleButtonSetState(m_shape_point, False, False);
+    XmToggleButtonSetState(m_shape_line, False, False);
+    XmToggleButtonSetState(m_shape_rect, False, False);
+    XmToggleButtonSetState(m_shape_ellipse, True, False);
+    m_shape = SHAPE_ELLIPSE;
+  }
   else
-    x = 100;
+  {
+    std::cerr << "Invalid shape button ID" << std::endl;
+  }
 
-  std::cout << "X: " << x << std::endl;
+  std::cout << "Shape ID: " << m_shape << std::endl;
 }
 
 /**
@@ -292,6 +319,7 @@ void MainWindow::CreateTools()
     NULL
   );
   XtAddCallback(m_shape_point, XmNvalueChangedCallback, OnShapeToggled, NULL);
+  XmToggleButtonSetState(m_shape_point, True, False);
 
   m_shape_line = XtVaCreateManagedWidget(
     "Line",
