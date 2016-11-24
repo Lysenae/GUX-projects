@@ -65,6 +65,7 @@ private:
   Widget   m_menu_exit_btn;
   Widget   m_menu_cascade;
   XmString m_menu_label;
+  XmString m_menu_accel;
 
   // Tools
   std::vector<Widget> m_shape_tbtns;

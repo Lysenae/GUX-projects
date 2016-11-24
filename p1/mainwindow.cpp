@@ -302,11 +302,21 @@ void MainWindow::CreateMenu()
   XtManageChild(m_menu_cascade);
   XmStringFree(m_menu_label);
 
-  m_menu_clear_btn =
-    XtVaCreateManagedWidget("Clear", xmPushButtonGadgetClass, m_menu_w, NULL);
-  m_menu_exit_btn =
-    XtVaCreateManagedWidget("Exit", xmPushButtonGadgetClass, m_menu_w, NULL);
+  m_menu_accel = XmStringCreateLocalized((char*)"Ctrl+C");
+  XtSetArg(args[0], XmNaccelerator, "Ctrl<Key>C");
+  XtSetArg(args[1], XmNacceleratorText, m_menu_accel);
+  XtSetArg(args[2], XmNmnemonic, 'C');
+  m_menu_clear_btn = XmCreatePushButtonGadget(m_menu_w, (char*)"Clear", args, 3);
+  XtManageChild(m_menu_clear_btn);
 
+  m_menu_accel = XmStringCreateLocalized((char*)"Ctrl+X");
+  XtSetArg(args[0], XmNaccelerator, "Ctrl<Key>X");
+  XtSetArg(args[1], XmNacceleratorText, m_menu_accel);
+  XtSetArg(args[2], XmNmnemonic, 'x');
+  m_menu_exit_btn = XmCreatePushButtonGadget(m_menu_w, (char*)"Exit", args, 3);
+  XtManageChild(m_menu_exit_btn);
+
+  XmStringFree(m_menu_accel);
   XtManageChild(m_menu_bar);
 }
 
