@@ -4,7 +4,6 @@
 
 // Init static variables
 Lines *MainWindow::m_lines         = new Lines();
-QuitDialog *MainWindow::m_quitdlg  = 0;
 GC MainWindow::m_draw_gc           = 0;
 GC MainWindow::m_input_gc          = 0;
 int MainWindow::m_button_pressed   = 0;
@@ -12,6 +11,7 @@ int MainWindow::x1                 = 0;
 int MainWindow::x2                 = 0;
 int MainWindow::y1                 = 0;
 int MainWindow::y2                 = 0;
+Widget MainWindow::m_main_win      = 0;
 Widget MainWindow::m_shape_point   = 0;
 Widget MainWindow::m_shape_line    = 0;
 Widget MainWindow::m_shape_rect    = 0;
@@ -26,6 +26,8 @@ int MainWindow::m_shape            = MainWindow::SHAPE_POINT;
 int MainWindow::m_border           = MainWindow::BORDER_FULL;
 bool MainWindow::m_fill            = false;
 int MainWindow::m_line_width       = 1;
+bool MainWindow::m_quit_dlg_exists = false;
+Widget MainWindow::m_quit_dialog   = 0;
 
 /**
  * InputLineEH
@@ -140,9 +142,7 @@ void MainWindow::ClearCB(Widget w, XtPointer client_data, XtPointer call_data)
  **/
 void MainWindow::OnQuit(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  m_quitdlg->Show();
-  bool rslt = m_quitdlg->Result();
-  std::cout << "Result: " << rslt << std::endl;
+  ShowQuitDialog();
 }
 
 void MainWindow::OnShapeToggled(Widget w, XtPointer client_data,
@@ -353,9 +353,12 @@ MainWindow::MainWindow(int argc, char **argv)
 
   XmMainWindowSetAreas(m_main_win, NULL, m_tools, NULL, NULL, m_frame);
 
-  wm_delete = XInternAtom(XtDisplay(m_top_level), "WM_DELETE_WINDOW", False);
-  XmAddWMProtocolCallback(m_top_level, wm_delete, OnQuit, NULL);
-  XmActivateWMProtocol(m_top_level, wm_delete);
+  Atom prop = XmInternAtom(XtDisplay(m_top_level),
+    const_cast<char*>("WM_PROTOCOLS"), False);
+  Atom prot = XInternAtom(XtDisplay(m_top_level),
+    const_cast<char*>("WM_DELETE_WINDOW"), True);
+  XmAddProtocols(m_top_level, prop, &prot, 1);
+  XmAddProtocolCallback(m_top_level, prop, prot, OnQuit, NULL);
 
   XtAddCallback(m_draw_area, XmNinputCallback, DrawLineCB, m_draw_area);
   XtAddEventHandler(m_draw_area, ButtonMotionMask, False, InputLineEH, NULL);
@@ -365,15 +368,13 @@ MainWindow::MainWindow(int argc, char **argv)
     m_draw_area);
   XtAddCallback(m_menu_exit_btn, XmNactivateCallback, OnQuit, 0);
 
-  m_quitdlg = new QuitDialog(m_main_win);
-
+  m_quit_dlg_exists = false;
   XtRealizeWidget(m_top_level);
 }
 
 MainWindow::~MainWindow()
 {
   delete m_lines;
-  delete m_quitdlg;
 }
 
 int MainWindow::run()
@@ -546,4 +547,49 @@ void MainWindow::CreateTools()
     NULL
   );
   XtAddCallback(m_fill_btn, XmNvalueChangedCallback, OnFillToggled, NULL);
+}
+
+void MainWindow::ShowQuitDialog()
+{
+  XmString m_msg;
+  XmString m_quit;
+  XmString m_cancel;
+
+  if(m_quit_dlg_exists == false)
+  {
+    m_quit_dialog = XmCreateQuestionDialog(m_main_win, (char*)"quitDialog",
+      NULL, 0);
+    m_msg         = XmStringCreateSimple((char*)"Quit?");
+    m_quit        = XmStringCreateSimple((char*)"Quit");
+    m_cancel      = XmStringCreateSimple((char*)"Cancel");
+    XtVaSetValues(
+      m_quit_dialog,
+      XmNmessageString, m_msg,
+      XmNokLabelString, m_quit,
+      XmNcancelLabelString, m_cancel,
+      XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
+      NULL
+    );
+    XtAddCallback(m_quit_dialog, XmNokCallback, OnQdQuit, NULL);
+    XtAddCallback(m_quit_dialog, XmNcancelCallback, OnQdCancel, NULL);
+    m_quit_dlg_exists = true;
+
+    XmStringFree(m_msg);
+    XmStringFree(m_quit);
+    XmStringFree(m_cancel);
+  }
+  XtManageChild(m_quit_dialog);
+}
+
+void MainWindow::OnQdQuit(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  std::cout << "QuitDialog: Quit" << std::endl;
+  exit(0);
+}
+
+void MainWindow::OnQdCancel(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  std::cout << "QuitDialog: Cancel" << std::endl;
 }

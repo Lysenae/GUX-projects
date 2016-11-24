@@ -24,7 +24,6 @@
 
 #include "colors.h"
 #include "lines.h"
-#include "quitdialog.h"
 
 class MainWindow
 {
@@ -68,12 +67,8 @@ private:
   static bool m_fill;
   static int m_line_width;
 
-  static QuitDialog *m_quitdlg;
-
-  Atom wm_delete;
-
   Widget m_top_level;
-  Widget m_main_win;
+  static Widget m_main_win;
   Widget m_frame;
   Widget m_draw_area;
   Widget m_tools;
@@ -107,9 +102,17 @@ private:
 
   XtAppContext m_app_context;
 
-  void ShowQuitDialog();
+  static Widget m_quit_dialog;
+  static bool m_quit_dlg_exists;
+
   void CreateMenu();
   void CreateTools();
+  static void ShowQuitDialog();
+
+  static void OnQdQuit(Widget w, XtPointer client_data,
+    XtPointer call_data);
+  static void OnQdCancel(Widget w, XtPointer client_data,
+    XtPointer call_data);
 };
 
 #endif // MAINWINDOW_H
