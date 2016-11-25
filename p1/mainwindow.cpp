@@ -24,226 +24,6 @@ Widget MainWindow::m_bg_cb         = 0;
 bool MainWindow::m_quit_dlg_exists = false;
 Widget MainWindow::m_quit_dialog   = 0;
 
-/**
- * InputLineEH
- **/
-void MainWindow::InputLineEH(Widget w, XtPointer client_data, XEvent *event,
-Boolean *cont)
-{
-  Pixel fg, bg;
-
-  if(m_button_pressed)
-  {
-    if(!m_input_gc)
-    {
-      m_input_gc = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
-      XSetFunction(XtDisplay(w), m_input_gc, GXxor);
-      XSetPlaneMask(XtDisplay(w), m_input_gc, ~0);
-      XtVaGetValues(w, XmNforeground, &fg, XmNbackground, &bg, NULL);
-      XSetForeground(XtDisplay(w), m_input_gc, fg ^ bg);
-    }
-
-    if(m_button_pressed > 1)
-    {
-      /* erase previous position */
-      XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
-    }
-    else
-    {
-      /* remember first MotionNotify */
-      m_button_pressed = 2;
-    }
-
-    x2 = event->xmotion.x;
-    y2 = event->xmotion.y;
-
-    XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
-  }
-}
-
-/**
- * "DrawLine" callback function
- **/
-void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data)
-{
-  Arg al[4];
-  int ac;
-  XGCValues v;
-  XmDrawingAreaCallbackStruct *d = (XmDrawingAreaCallbackStruct*) call_data;
-
-  switch (d->event->type)
-  {
-    case ButtonPress:
-    {
-      if (d->event->xbutton.button == Button1)
-      {
-        m_button_pressed = 1;
-        x1 = d->event->xbutton.x;
-        y1 = d->event->xbutton.y;
-      }
-      break;
-    }
-    case ButtonRelease:
-    {
-      if(d->event->xbutton.button == Button1)
-      {
-        Shape::AddLine(x1, y1, d->event->xbutton.x, d->event->xbutton.y);
-        m_button_pressed = 0;
-
-        if(!m_draw_gc)
-        {
-          ac = 0;
-          XtSetArg(al[ac], XmNforeground, &v.foreground); ac++;
-          XtGetValues(w, al, ac);
-          m_draw_gc = XCreateGC(XtDisplay(w), XtWindow(w),
-          GCForeground, &v);
-        }
-        XDrawLine(XtDisplay(w), XtWindow(w), m_draw_gc,
-          x1, y1, d->event->xbutton.x, d->event->xbutton.y
-        );
-      }
-      break;
-    }
-  }
-}
-
-/**
- * "Expose" callback function
- **/
-void MainWindow::ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
-{
-  if(Shape::LinesCount() <= 0)
-    return;
-  if(!m_draw_gc)
-    m_draw_gc = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
-
-  XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, Shape::Lines(),
-    Shape::LinesCount());
-}
-
-/**
- * "Clear" button callback function
- **/
-void MainWindow::ClearCB(Widget w, XtPointer client_data, XtPointer call_data)
-{
-  Widget wcd = (Widget) client_data;
-
-  Shape::ClearAll();
-  XClearWindow(XtDisplay(wcd), XtWindow(wcd));
-}
-
-/**
- * "Quit" button callback function
- **/
-void MainWindow::OnQuit(Widget w, XtPointer client_data, XtPointer call_data)
-{
-  ShowQuitDialog();
-}
-
-void MainWindow::OnShapeToggled(Widget w, XtPointer client_data,
-XtPointer call_data)
-{
-  if(w == m_shape_point)
-  {
-    XmToggleButtonSetState(m_shape_point, True, False);
-    XmToggleButtonSetState(m_shape_line, False, False);
-    XmToggleButtonSetState(m_shape_rect, False, False);
-    XmToggleButtonSetState(m_shape_ellipse, False, False);
-    Shape::SetShape(Shape::POINT);
-  }
-  else if(w == m_shape_line)
-  {
-    XmToggleButtonSetState(m_shape_point, False, False);
-    XmToggleButtonSetState(m_shape_line, True, False);
-    XmToggleButtonSetState(m_shape_rect, False, False);
-    XmToggleButtonSetState(m_shape_ellipse, False, False);
-    Shape::SetShape(Shape::LINE);
-  }
-  else if(w == m_shape_rect)
-  {
-    XmToggleButtonSetState(m_shape_point, False, False);
-    XmToggleButtonSetState(m_shape_line, False, False);
-    XmToggleButtonSetState(m_shape_rect, True, False);
-    XmToggleButtonSetState(m_shape_ellipse, False, False);
-    Shape::SetShape(Shape::RECT);
-  }
-  else if(w == m_shape_ellipse)
-  {
-    XmToggleButtonSetState(m_shape_point, False, False);
-    XmToggleButtonSetState(m_shape_line, False, False);
-    XmToggleButtonSetState(m_shape_rect, False, False);
-    XmToggleButtonSetState(m_shape_ellipse, True, False);
-    Shape::SetShape(Shape::ELLIPSE);
-  }
-  else
-  {
-    std::cerr << "Invalid shape button ID" << std::endl;
-  }
-}
-
-void MainWindow::OnBorderToggled(Widget w, XtPointer client_data,
-XtPointer call_data)
-{
-  if(w == m_border_full)
-  {
-    XmToggleButtonSetState(m_border_full, True, False);
-    XmToggleButtonSetState(m_border_dotted, False, False);
-    Shape::SetBorder(Shape::BORDER_FULL);
-  }
-  else if(w == m_border_dotted)
-  {
-    XmToggleButtonSetState(m_border_full, False, False);
-    XmToggleButtonSetState(m_border_dotted, True, False);
-    Shape::SetBorder(Shape::BORDER_DOTTED);
-  }
-  else
-  {
-    std::cerr << "Invalid border type ID" << std::endl;
-  }
-}
-
-void MainWindow::OnFillToggled(Widget w, XtPointer client_data,
-XtPointer call_data)
-{
-  if(XmToggleButtonGetState(w) == True)
-  {
-    Shape::SetFill(true);
-  }
-  else
-  {
-    Shape::SetFill(false);
-  }
-}
-
-void MainWindow::OnColorChanged(Widget w, XtPointer client_data,
-XtPointer call_data)
-{
-  XmComboBoxCallbackStruct *cbcs = (XmComboBoxCallbackStruct*)call_data;
-  unsigned int item = (unsigned int)cbcs->item_position;
-  if(w == m_fg_cb)
-  {
-    Colors::SetForeground(item);
-  }
-  else if(w == m_bg_cb)
-  {
-    Colors::SetBackground(item);
-  }
-  else
-  {
-    std::cerr << "Invalid color type changed" << std::endl;
-  }
-}
-
-void MainWindow::OnLineWidthChanged(Widget w, XtPointer client_data,
-XtPointer call_data)
-{
-  XmScaleCallbackStruct *cbcs = (XmScaleCallbackStruct*)call_data;
-  Shape::SetLineWidth(cbcs->value);
-}
-
-/**
- * Main
- **/
 MainWindow::MainWindow(int argc, char **argv)
 {
   XtSetLanguageProc(NULL, (XtLanguageProc)NULL, NULL);
@@ -346,7 +126,7 @@ MainWindow::MainWindow(int argc, char **argv)
   XmAddProtocolCallback(m_top_level, prop, prot, OnQuit, NULL);
 
   XtAddCallback(m_draw_area, XmNinputCallback, DrawLineCB, m_draw_area);
-  XtAddEventHandler(m_draw_area, ButtonMotionMask, False, InputLineEH, NULL);
+  XtAddEventHandler(m_draw_area, ButtonMotionMask, False, DrawEH, NULL);
   XtAddCallback(m_draw_area, XmNexposeCallback, ExposeCB, m_draw_area);
 
   XtAddCallback(m_menu_clear_btn, XmNactivateCallback, ClearCB,
@@ -564,6 +344,217 @@ void MainWindow::ShowQuitDialog()
     XmStringFree(m_cancel);
   }
   XtManageChild(m_quit_dialog);
+}
+
+// *** PRIVATE ***
+
+void MainWindow::DrawEH(Widget w, XtPointer client_data, XEvent *event,
+Boolean *cont)
+{
+  Pixel fg, bg;
+
+  if(m_button_pressed)
+  {
+    if(!m_input_gc)
+    {
+      m_input_gc = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
+      XSetFunction(XtDisplay(w), m_input_gc, GXxor);
+      XSetPlaneMask(XtDisplay(w), m_input_gc, ~0);
+      XtVaGetValues(w, XmNforeground, &fg, XmNbackground, &bg, NULL);
+      XSetForeground(XtDisplay(w), m_input_gc, fg ^ bg);
+    }
+
+    if(m_button_pressed > 1)
+    {
+      XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
+    }
+    else
+    {
+      m_button_pressed = 2;
+    }
+
+    x2 = event->xmotion.x;
+    y2 = event->xmotion.y;
+
+    XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
+  }
+}
+
+void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data)
+{
+  Arg al[4];
+  int ac;
+  XGCValues v;
+  XmDrawingAreaCallbackStruct *d = (XmDrawingAreaCallbackStruct*) call_data;
+
+  switch (d->event->type)
+  {
+    case ButtonPress:
+    {
+      if (d->event->xbutton.button == Button1)
+      {
+        m_button_pressed = 1;
+        x1 = d->event->xbutton.x;
+        y1 = d->event->xbutton.y;
+      }
+      break;
+    }
+    case ButtonRelease:
+    {
+      if(d->event->xbutton.button == Button1)
+      {
+        Shape::AddLine(x1, y1, d->event->xbutton.x, d->event->xbutton.y);
+        m_button_pressed = 0;
+
+        if(!m_draw_gc)
+        {
+          ac = 0;
+          XtSetArg(al[ac], XmNforeground, &v.foreground); ac++;
+          XtGetValues(w, al, ac);
+          m_draw_gc = XCreateGC(XtDisplay(w), XtWindow(w),
+          GCForeground, &v);
+        }
+        XDrawLine(XtDisplay(w), XtWindow(w), m_draw_gc,
+          x1, y1, d->event->xbutton.x, d->event->xbutton.y
+        );
+      }
+      break;
+    }
+  }
+}
+
+/**
+ * "Expose" callback function
+ **/
+void MainWindow::ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
+{
+  if(Shape::LinesCount() <= 0)
+    return;
+  if(!m_draw_gc)
+    m_draw_gc = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
+
+  XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, Shape::Lines(),
+    Shape::LinesCount());
+}
+
+/**
+ * "Clear" button callback function
+ **/
+void MainWindow::ClearCB(Widget w, XtPointer client_data, XtPointer call_data)
+{
+  Widget wcd = (Widget) client_data;
+
+  Shape::ClearAll();
+  XClearWindow(XtDisplay(wcd), XtWindow(wcd));
+}
+
+/**
+ * "Quit" button callback function
+ **/
+void MainWindow::OnQuit(Widget w, XtPointer client_data, XtPointer call_data)
+{
+  ShowQuitDialog();
+}
+
+void MainWindow::OnShapeToggled(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  if(w == m_shape_point)
+  {
+    XmToggleButtonSetState(m_shape_point, True, False);
+    XmToggleButtonSetState(m_shape_line, False, False);
+    XmToggleButtonSetState(m_shape_rect, False, False);
+    XmToggleButtonSetState(m_shape_ellipse, False, False);
+    Shape::SetShape(Shape::POINT);
+  }
+  else if(w == m_shape_line)
+  {
+    XmToggleButtonSetState(m_shape_point, False, False);
+    XmToggleButtonSetState(m_shape_line, True, False);
+    XmToggleButtonSetState(m_shape_rect, False, False);
+    XmToggleButtonSetState(m_shape_ellipse, False, False);
+    Shape::SetShape(Shape::LINE);
+  }
+  else if(w == m_shape_rect)
+  {
+    XmToggleButtonSetState(m_shape_point, False, False);
+    XmToggleButtonSetState(m_shape_line, False, False);
+    XmToggleButtonSetState(m_shape_rect, True, False);
+    XmToggleButtonSetState(m_shape_ellipse, False, False);
+    Shape::SetShape(Shape::RECT);
+  }
+  else if(w == m_shape_ellipse)
+  {
+    XmToggleButtonSetState(m_shape_point, False, False);
+    XmToggleButtonSetState(m_shape_line, False, False);
+    XmToggleButtonSetState(m_shape_rect, False, False);
+    XmToggleButtonSetState(m_shape_ellipse, True, False);
+    Shape::SetShape(Shape::ELLIPSE);
+  }
+  else
+  {
+    std::cerr << "Invalid shape button ID" << std::endl;
+  }
+}
+
+void MainWindow::OnBorderToggled(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  if(w == m_border_full)
+  {
+    XmToggleButtonSetState(m_border_full, True, False);
+    XmToggleButtonSetState(m_border_dotted, False, False);
+    Shape::SetBorder(Shape::BORDER_FULL);
+  }
+  else if(w == m_border_dotted)
+  {
+    XmToggleButtonSetState(m_border_full, False, False);
+    XmToggleButtonSetState(m_border_dotted, True, False);
+    Shape::SetBorder(Shape::BORDER_DOTTED);
+  }
+  else
+  {
+    std::cerr << "Invalid border type ID" << std::endl;
+  }
+}
+
+void MainWindow::OnFillToggled(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  if(XmToggleButtonGetState(w) == True)
+  {
+    Shape::SetFill(true);
+  }
+  else
+  {
+    Shape::SetFill(false);
+  }
+}
+
+void MainWindow::OnColorChanged(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  XmComboBoxCallbackStruct *cbcs = (XmComboBoxCallbackStruct*)call_data;
+  unsigned int item = (unsigned int)cbcs->item_position;
+  if(w == m_fg_cb)
+  {
+    Colors::SetForeground(item);
+  }
+  else if(w == m_bg_cb)
+  {
+    Colors::SetBackground(item);
+  }
+  else
+  {
+    std::cerr << "Invalid color type changed" << std::endl;
+  }
+}
+
+void MainWindow::OnLineWidthChanged(Widget w, XtPointer client_data,
+XtPointer call_data)
+{
+  XmScaleCallbackStruct *cbcs = (XmScaleCallbackStruct*)call_data;
+  Shape::SetLineWidth(cbcs->value);
 }
 
 void MainWindow::OnQdQuit(Widget w, XtPointer client_data,

@@ -32,23 +32,6 @@ public:
   ~MainWindow();
   int run();
 
-  static void OnQuit(Widget w, XtPointer client_data, XtPointer call_data);
-  static void ClearCB(Widget w, XtPointer client_data, XtPointer call_data);
-  static void ExposeCB(Widget w, XtPointer client_data, XtPointer call_data);
-  static void DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data);
-  static void InputLineEH(Widget w, XtPointer client_data, XEvent *event,
-    Boolean *cont);
-  static void OnShapeToggled(Widget w, XtPointer client_data,
-    XtPointer call_data);
-  static void OnBorderToggled(Widget w, XtPointer client_data,
-    XtPointer call_data);
-  static void OnFillToggled(Widget w, XtPointer client_data,
-    XtPointer call_data);
-  static void OnColorChanged(Widget w, XtPointer client_data,
-    XtPointer call_data);
-  static void OnLineWidthChanged(Widget w, XtPointer client_data,
-    XtPointer call_data);
-
 private:
   static GC m_draw_gc;         // GC used for final drawing
   static GC m_input_gc;        // GC used for drawing current position
@@ -96,6 +79,23 @@ private:
   void CreateMenu();
   void CreateTools();
   static void ShowQuitDialog();
+
+  static void DrawEH(Widget w, XtPointer client_data, XEvent *event,
+    Boolean *cont);
+  static void OnQuit(Widget w, XtPointer client_data, XtPointer call_data);
+  static void ClearCB(Widget w, XtPointer client_data, XtPointer call_data);
+  static void ExposeCB(Widget w, XtPointer client_data, XtPointer call_data);
+  static void DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data);
+  static void OnShapeToggled(Widget w, XtPointer client_data,
+    XtPointer call_data);
+  static void OnBorderToggled(Widget w, XtPointer client_data,
+    XtPointer call_data);
+  static void OnFillToggled(Widget w, XtPointer client_data,
+    XtPointer call_data);
+  static void OnColorChanged(Widget w, XtPointer client_data,
+    XtPointer call_data);
+  static void OnLineWidthChanged(Widget w, XtPointer client_data,
+    XtPointer call_data);
 
   static void OnQdQuit(Widget w, XtPointer client_data,
     XtPointer call_data);
