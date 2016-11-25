@@ -25,11 +25,11 @@ public:
 
   static void Draw(Widget w, int x1, int y1, int x2, int y2);
   static void DrawAll(Widget w);
+
   static void SetInputStyle(Widget w);
   static void SetDrawStyle(Widget w);
 
   static void Add(int x1, int y1, int x2, int y2);
-  static int LinesCount();
   static std::vector<ShapeProperties*> All();
 
   static void ClearAll();
@@ -55,10 +55,11 @@ private:
   static Pixel m_bg;
 
   static std::vector<ShapeProperties*> m_shapes;
-  static int m_lines_cnt;
 
   static int Width(int x1, int x2);
   static int Height(int y1, int y2);
+  static int X(int x1, int x2);
+  static int Y(int y1, int y2);
 };
 
 #endif // LINES_H

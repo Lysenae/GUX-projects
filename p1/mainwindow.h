@@ -78,12 +78,12 @@ private:
   void CreateTools();
   static void ShowQuitDialog();
 
-  static void DrawEH(Widget w, XtPointer client_data, XEvent *event,
+  static void HandleDraw(Widget w, XtPointer client_data, XEvent *event,
     Boolean *cont);
   static void OnQuit(Widget w, XtPointer client_data, XtPointer call_data);
-  static void ClearCB(Widget w, XtPointer client_data, XtPointer call_data);
-  static void ExposeCB(Widget w, XtPointer client_data, XtPointer call_data);
-  static void DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data);
+  static void OnClear(Widget w, XtPointer client_data, XtPointer call_data);
+  static void OnExpose(Widget w, XtPointer client_data, XtPointer call_data);
+  static void OnDraw(Widget w, XtPointer client_data, XtPointer call_data);
   static void OnShapeToggled(Widget w, XtPointer client_data,
     XtPointer call_data);
   static void OnBorderToggled(Widget w, XtPointer client_data,

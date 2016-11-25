@@ -11,13 +11,16 @@ public:
   int Type();
   int Border();
   int LineWidth();
+  bool Filled();
   Pixel Foreground();
   Pixel Background();
   XSegment *Line();
   XArc *Ellipse();
+  XPoint *Point();
 
   void SetLine(XSegment *line);
   void SetEllipse(XArc *ellipse);
+  void SetPoint(XPoint *Point);
 
 private:
   int       m_type;
@@ -28,6 +31,7 @@ private:
   Pixel     m_bg;
   XSegment *m_line;
   XArc     *m_ellipse;
+  XPoint   *m_point;
 };
 
 #endif // SHAPEPROPS_H

@@ -11,6 +11,7 @@ Pixel fg, Pixel bg)
   m_bg      = bg;
   m_line    = NULL;
   m_ellipse = NULL;
+  m_point   = NULL;
 }
 
 int ShapeProperties::Type()
@@ -26,6 +27,11 @@ int ShapeProperties::Border()
 int ShapeProperties::LineWidth()
 {
   return m_width;
+}
+
+bool ShapeProperties::Filled()
+{
+  return m_filled;
 }
 
 Pixel ShapeProperties::Foreground()
@@ -48,6 +54,11 @@ XArc *ShapeProperties::Ellipse()
   return m_ellipse;
 }
 
+XPoint *ShapeProperties::Point()
+{
+  return m_point;
+}
+
 void ShapeProperties::SetLine(XSegment *line)
 {
   m_line = line;
@@ -56,4 +67,9 @@ void ShapeProperties::SetLine(XSegment *line)
 void ShapeProperties::SetEllipse(XArc *ellipse)
 {
   m_ellipse = ellipse;
+}
+
+void ShapeProperties::SetPoint(XPoint *point)
+{
+  m_point = point;
 }

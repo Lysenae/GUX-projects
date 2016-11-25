@@ -123,11 +123,11 @@ MainWindow::MainWindow(int argc, char **argv)
   XmAddProtocols(m_top_level, prop, &prot, 1);
   XmAddProtocolCallback(m_top_level, prop, prot, OnQuit, NULL);
 
-  XtAddCallback(m_draw_area, XmNinputCallback, DrawLineCB, m_draw_area);
-  XtAddEventHandler(m_draw_area, ButtonMotionMask, False, DrawEH, NULL);
-  XtAddCallback(m_draw_area, XmNexposeCallback, ExposeCB, m_draw_area);
+  XtAddCallback(m_draw_area, XmNinputCallback, OnDraw, m_draw_area);
+  XtAddEventHandler(m_draw_area, ButtonMotionMask, False, HandleDraw, NULL);
+  XtAddCallback(m_draw_area, XmNexposeCallback, OnExpose, m_draw_area);
 
-  XtAddCallback(m_menu_clear_btn, XmNactivateCallback, ClearCB,
+  XtAddCallback(m_menu_clear_btn, XmNactivateCallback, OnClear,
     m_draw_area);
   XtAddCallback(m_menu_exit_btn, XmNactivateCallback, OnQuit, 0);
 
@@ -346,7 +346,7 @@ void MainWindow::ShowQuitDialog()
 
 // *** PRIVATE ***
 
-void MainWindow::DrawEH(Widget w, XtPointer client_data, XEvent *event,
+void MainWindow::HandleDraw(Widget w, XtPointer client_data, XEvent *event,
 Boolean *cont)
 {
   if(m_button_pressed)
@@ -369,7 +369,7 @@ Boolean *cont)
   }
 }
 
-void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data)
+void MainWindow::OnDraw(Widget w, XtPointer client_data, XtPointer call_data)
 {
   XmDrawingAreaCallbackStruct *d = (XmDrawingAreaCallbackStruct*)call_data;
 
@@ -396,7 +396,7 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
         Shape::SetDrawGC(w);
         Shape::SetDrawStyle(w);
         Shape::Draw(w, x1, y1, x2, y2);
-        XClearArea(XtDisplay(w), XtWindow(w), 0, 0, 0, 0, True);
+        XClearArea(XtDisplay(w), XtWindow(w), 0, 0, 0, 0, True); // Expose
       }
       break;
     }
@@ -406,13 +406,8 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
 /**
  * "Expose" callback function
  **/
-void MainWindow::ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
+void MainWindow::OnExpose(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  if(Shape::LinesCount() <= 0)
-  {
-    return;
-  }
-
   //Shape::InitDrawGC(w);
   Shape::DrawAll(w);
 }
@@ -420,10 +415,9 @@ void MainWindow::ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
 /**
  * "Clear" button callback function
  **/
-void MainWindow::ClearCB(Widget w, XtPointer client_data, XtPointer call_data)
+void MainWindow::OnClear(Widget w, XtPointer client_data, XtPointer call_data)
 {
   Widget wcd = (Widget) client_data;
-
   Shape::ClearAll();
   XClearWindow(XtDisplay(wcd), XtWindow(wcd));
 }

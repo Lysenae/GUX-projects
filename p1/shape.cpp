@@ -10,8 +10,6 @@ GC Shape::m_draw_gc      = 0;
 Pixel Shape::m_fg        = 0;
 Pixel Shape::m_bg        = 0;
 
-int Shape::m_lines_cnt   = 0;
-
 std::vector<ShapeProperties*> Shape::m_shapes;
 
 void Shape::SetShape(int shape)
@@ -76,22 +74,47 @@ void Shape::SetDrawGC(Widget w)
 
 void Shape::Draw(Widget w, int x1, int y1, int x2, int y2)
 {
-  if(m_shape == Shape::LINE)
+  int width, height, x, y;
+
+  if(m_shape == Shape::POINT)
+  {
+    if(m_line_width == 0)
+    {
+      XDrawPoint(XtDisplay(w), XtWindow(w), m_draw_gc, x1, y1);
+    }
+    else
+    {
+      x      = x1 - m_line_width;
+      y      = y1 - m_line_width;
+      width  = 2 * m_line_width + 1;
+      height = 2 * m_line_width + 1;
+      XFillArc(XtDisplay(w), XtWindow(w), m_draw_gc, x, y, width, height,
+        Shape::ANGLE1, Shape::ANGLE2);
+    }
+  }
+  else if(m_shape == Shape::LINE)
   {
     XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
   }
   else if(m_shape == Shape::ELLIPSE)
   {
-    int width  = Width(x1, x2);
-    int height = Height(y1, y2);
+    width  = Width(x1, x2);
+    height = Height(y1, y2);
+    x = X(x1, x2);
+    y = Y(y1, y2);
     if(m_fill)
     {
-      XFillArc(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, width, height,
+      XFillArc(XtDisplay(w), XtWindow(w), m_input_gc, x, y, width, height,
         Shape::ANGLE1, Shape::ANGLE2);
+      if(m_border == Shape::BORDER_DOTTED)
+      {
+        XDrawArc(XtDisplay(w), XtWindow(w), m_input_gc, x, y, width, height,
+          Shape::ANGLE1, Shape::ANGLE2);
+      }
     }
     else
     {
-      XDrawArc(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, width, height,
+      XDrawArc(XtDisplay(w), XtWindow(w), m_input_gc, x, y, width, height,
         Shape::ANGLE1, Shape::ANGLE2);
     }
   }
@@ -101,17 +124,46 @@ void Shape::DrawAll(Widget w)
 {
   for(unsigned int i=0; i<m_shapes.size(); ++i)
   {
+    ShapeProperties *shape = m_shapes[i];
     XGCValues gcv;
-    gcv.line_style     = Border(m_shapes[i]->Border());
-    gcv.line_width     = m_shapes[i]->LineWidth();
-    gcv.foreground     = m_shapes[i]->Foreground();
-    gcv.background     = m_shapes[i]->Background();
+
+    gcv.line_style     = Border(shape->Border());
+    gcv.line_width     = shape->LineWidth();
+    gcv.foreground     = shape->Foreground();
+    gcv.background     = shape->Background();
     unsigned long mask = GCForeground | GCBackground | GCLineWidth | GCLineStyle;
     XChangeGC(XtDisplay(w), m_draw_gc, mask, &gcv);
     
-    if(m_shapes[i]->Type() == Shape::LINE)
+    if(shape->Type() == Shape::POINT)
     {
-      XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, m_shapes[i]->Line(), 1);
+      if(shape->LineWidth() == 0)
+      {
+        XDrawPoints(XtDisplay(w), XtWindow(w), m_draw_gc, shape->Point(), 1,
+          CoordModeOrigin);
+      }
+      else
+      {
+        XFillArcs(XtDisplay(w), XtWindow(w), m_draw_gc, shape->Ellipse(), 1);
+      }
+    }
+    else if(shape->Type() == Shape::LINE)
+    {
+      XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, shape->Line(), 1);
+    }
+    else if(shape->Type() == Shape::ELLIPSE)
+    {
+      if(shape->Filled())
+      {
+        XFillArcs(XtDisplay(w), XtWindow(w), m_draw_gc, shape->Ellipse(), 1);
+        if(shape->Border() == Shape::BORDER_DOTTED)
+        {
+          XDrawArcs(XtDisplay(w), XtWindow(w), m_draw_gc, shape->Ellipse(), 1);
+        }
+      }
+      else
+      {
+        XDrawArcs(XtDisplay(w), XtWindow(w), m_draw_gc, shape->Ellipse(), 1);
+      }
     }
   }
 }
@@ -147,22 +199,48 @@ void Shape::Add(int x1, int y1, int x2, int y2)
     Colors::Foreground(), Colors::Background()
   );
 
-  if(m_shape == Shape::LINE)
+  if(m_shape == Shape::POINT)
   {
-    ++m_lines_cnt;
+    if(m_line_width == 0)
+    {
+      XPoint *pt = (XPoint*) XtMalloc((Cardinal)sizeof(XPoint));
+      pt->x = x1;
+      pt->y = y1;
+      s->SetPoint(pt);
+    }
+    else
+    {
+      XArc *elps   = (XArc*) XtMalloc((Cardinal)sizeof(XArc));
+      elps->x      = x1 - m_line_width;
+      elps->y      = y1 - m_line_width;
+      elps->width  = 2 * m_line_width + 1;
+      elps->height = 2 * m_line_width + 1;
+      elps->angle1 = Shape::ANGLE1;
+      elps->angle2 = Shape::ANGLE2;
+      s->SetEllipse(elps);
+    }
+  }
+  else if(m_shape == Shape::LINE)
+  {
     XSegment *line = (XSegment*) XtMalloc((Cardinal)sizeof(XSegment));
-    line->x1 = x1;
-    line->y1 = y1;
-    line->x2 = x2;
-    line->y2 = y2;
+    line->x1       = x1;
+    line->y1       = y1;
+    line->x2       = x2;
+    line->y2       = y2;
     s->SetLine(line);
   }
+  else if(m_shape == Shape::ELLIPSE)
+  {
+    XArc *elps   = (XArc*) XtMalloc((Cardinal)sizeof(XArc));
+    elps->x      = X(x1, x2);
+    elps->y      = Y(y1, y2);
+    elps->width  = Width(x1, x2);
+    elps->height = Height(y1, y2);
+    elps->angle1 = Shape::ANGLE1;
+    elps->angle2 = Shape::ANGLE2;
+    s->SetEllipse(elps);
+  }
   m_shapes.push_back(s);
-}
-
-int Shape::LinesCount()
-{
-  return m_lines_cnt;
 }
 
 std::vector<ShapeProperties*> Shape::All()
@@ -175,12 +253,28 @@ std::vector<ShapeProperties*> Shape::All()
 
 void Shape::ClearAll()
 {
-  m_lines_cnt = 0;
+  ShapeProperties *s = NULL;
   for(unsigned int i=0; i<m_shapes.size(); i++)
   {
-    if(m_shapes[i]->Type() == Shape::LINE)
+    s = m_shapes[i];
+    if(s->Type() == Shape::POINT)
     {
-      XtFree((char*)(m_shapes[i]->Line()));
+      if(s->LineWidth() == 0)
+      {
+        XtFree((char*)s->Point());
+      }
+      else
+      {
+        XtFree((char*)s->Ellipse());
+      }
+    }
+    else if(s->Type() == Shape::LINE)
+    {
+      XtFree((char*)(s->Line()));
+    }
+    else if(s->Type() == Shape::ELLIPSE)
+    {
+      XtFree((char*)(s->Ellipse()));
     }
   }
   m_shapes.clear();
@@ -194,4 +288,14 @@ int Shape::Width(int x1, int x2)
 int Shape::Height(int y1, int y2)
 {
   return y1 >= y2 ? y1 - y2 : y2 - y1;
+}
+
+int Shape::X(int x1, int x2)
+{
+  return x1 <= x2 ? x1 : x2;
+}
+
+int Shape::Y(int y1, int y2)
+{
+  return y1 <= y2 ? y1 : y2;
 }
