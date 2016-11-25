@@ -8,7 +8,6 @@
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
 #include <vector>
-#include <iostream>
 #include <cstdlib>
 
 #include "colors.h"

@@ -8,10 +8,11 @@
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
 
-#include <vector>
-#include <iostream>
-#include <string>
+#include <cstdio>
 #include <cstring>
+#include <cstdlib>
+
+#define COLORS 6
 
 class Colors
 {
@@ -22,16 +23,16 @@ public:
   static void SetBackground(unsigned int i);
   static void SetForeground(unsigned int i);
   static int Count();
-  static std::vector<std::string> Names();
-  static std::string Name(unsigned int i);
+  static char **Names();
+  static char *Name(unsigned int i);
 
 private:
-  static std::vector<std::string> m_color_names;
-  static std::vector<Pixel> m_colors;
+  static char *m_color_names[COLORS];
+  static Pixel *m_colors;
   static Pixel m_background;
   static Pixel m_foreground;
 
-  static std::vector<std::string> InitNames();
+  static char **InitNames();
 };
 
 #endif // COLORS_H

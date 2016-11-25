@@ -46,7 +46,7 @@ MainWindow::MainWindow(int argc, char **argv)
 
   if(!Colors::Init(m_top_level))
   {
-    std::cerr << "Failed to initialize colors!" << std::endl;
+    fprintf(stderr, "Failed to initialize colors\n");
     exit(1);
   }
 
@@ -271,11 +271,11 @@ void MainWindow::CreateTools()
   XtAddCallback(m_line_width_sc, XmNvalueChangedCallback,
     OnLineWidthChanged, NULL);
 
-  std::vector<std::string> col_names = Colors::Names();
+  char **col_names = Colors::Names();
   XmString colors[Colors::Count()];
   for(int i=0; i<Colors::Count(); ++i)
   {
-    colors[i] = XmStringCreateLocalized((char*)col_names[i].c_str());
+    colors[i] = XmStringCreateLocalized(col_names[i]);
   }
 
   label = XmStringCreateSimple((char*)"FG:");
@@ -518,7 +518,7 @@ XtPointer call_data)
   }
   else
   {
-    std::cerr << "Invalid shape button ID" << std::endl;
+    fprintf(stderr, "Invalid shape button ID\n");
   }
 }
 
@@ -545,7 +545,7 @@ XtPointer call_data)
   }
   else
   {
-    std::cerr << "Invalid border type ID" << std::endl;
+    fprintf(stderr, "Invalid border type ID\n");
   }
 }
 
@@ -589,7 +589,7 @@ XtPointer call_data)
   }
   else
   {
-    std::cerr << "Invalid color type changed" << std::endl;
+    fprintf(stderr, "Invalid color type changed\n");
   }
 }
 

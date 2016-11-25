@@ -5,8 +5,8 @@
 #include "colors.h"
 
 // Init static variables
-std::vector<std::string> Colors::m_color_names = InitNames();
-std::vector<Pixel> Colors::m_colors;
+char *Colors::m_color_names[COLORS];
+Pixel *Colors::m_colors      = 0;
 Pixel Colors::m_background;
 Pixel Colors::m_foreground;
 
@@ -16,8 +16,10 @@ Pixel Colors::m_foreground;
 ///
 bool Colors::Init(Widget shell)
 {
+  InitNames();
   XColor col_screen, col_exact;
   XWindowAttributes win_attrs;
+  m_colors = (Pixel*)XtMalloc((Cardinal)(sizeof(Pixel) * COLORS));
 
   Display  *display = XtDisplay(shell);
   Screen   *screen  = XtScreen(shell);
@@ -25,16 +27,15 @@ bool Colors::Init(Widget shell)
 
   XGetWindowAttributes(display, RootWindowOfScreen(screen), &win_attrs);
 
-  for(unsigned int i=0; i<m_color_names.size(); i++)
+  for(unsigned int i=0; i<COLORS; i++)
   {
-    if(XAllocNamedColor(display, colmap, m_color_names[i].c_str(),
+    if(XAllocNamedColor(display, colmap, m_color_names[i],
     &col_screen, &col_exact) == 0)
     {
-      std::cerr << "Failed to initialize color '" << m_color_names[i] <<
-        "'" << std::endl;
+      fprintf(stderr, "Failed to initialize color '%s'\n", m_color_names[i]);
       return false;
     }
-    m_colors.push_back(col_screen.pixel);
+    m_colors[i] = col_screen.pixel;
   }
   m_background = m_colors[0];
   m_foreground = m_colors[1];
@@ -66,7 +67,7 @@ Pixel Colors::Foreground()
 ///
 void Colors::SetBackground(unsigned int i)
 {
-  if(i < m_colors.size())
+  if(i < COLORS)
     m_background = m_colors[i];
 }
 
@@ -76,7 +77,7 @@ void Colors::SetBackground(unsigned int i)
 ///
 void Colors::SetForeground(unsigned int i)
 {
-  if(i < m_colors.size())
+  if(i < COLORS)
     m_foreground = m_colors[i];
 }
 
@@ -86,14 +87,14 @@ void Colors::SetForeground(unsigned int i)
 ///
 int Colors::Count()
 {
-  return m_colors.size();
+  return COLORS;
 }
 
 ///
 /// \brief Get color names.
 /// \return Color names
 ///
-std::vector<std::string> Colors::Names()
+char **Colors::Names()
 {
   return m_color_names;
 }
@@ -102,7 +103,7 @@ std::vector<std::string> Colors::Names()
 /// \brief Get color name.
 /// \return i Id of color
 ///
-std::string Colors::Name(unsigned int i)
+char *Colors::Name(unsigned int i)
 {
   return m_color_names[i];
 }
@@ -111,14 +112,16 @@ std::string Colors::Name(unsigned int i)
 /// \brief Initilize vector of color names.
 /// \return List of color names
 ///
-std::vector<std::string> Colors::InitNames()
+char **Colors::InitNames()
 {
-  std::vector<std::string> v;
-  v.push_back("white");
-  v.push_back("black");
-  v.push_back("gold");
-  v.push_back("olive");
-  v.push_back("maroon");
-  v.push_back("indigo");
-  return v;
+  for(int i=0; i<COLORS; ++i)
+  {
+    m_color_names[i] = (char*) malloc(10);
+  }
+  strcpy(m_color_names[0], "white");
+  strcpy(m_color_names[1], "black");
+  strcpy(m_color_names[2], "gold");
+  strcpy(m_color_names[3], "olive");
+  strcpy(m_color_names[4], "maroon");
+  strcpy(m_color_names[5], "indigo");
 }
