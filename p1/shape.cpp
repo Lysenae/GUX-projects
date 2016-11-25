@@ -10,21 +10,10 @@ GC Shape::m_draw_gc      = 0;
 Pixel Shape::m_fg        = 0;
 Pixel Shape::m_bg        = 0;
 
-std::vector<ShapeProperties> Shape::m_shapes;
+std::vector<ShapeProperties*> Shape::m_shapes;
 
 int Shape::m_lines_cnt   = 0;
 int Shape::m_max_lines   = 0;
-
-ShapeProperties::ShapeProperties(int type, int border, int width, bool filled,
-Pixel fg, Pixel bg)
-{
-  m_type = type;
-  m_border = border;
-  m_width = width;
-  m_filled = filled;
-  m_fg = fg;
-  m_bg = bg;
-}
 
 void Shape::SetShape(int shape)
 {
@@ -93,9 +82,9 @@ void Shape::DrawAll(Widget w)
 {
   for(unsigned int i=0; i<m_shapes.size(); ++i)
   {
-    if(m_shapes[i].m_type == Shape::LINE)
+    if(m_shapes[i]->Type() == Shape::LINE)
     {
-      XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, m_shapes[i].m_line, 1);
+      XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, m_shapes[i]->Line(), 1);
     }
   }
 }
@@ -104,7 +93,7 @@ void Shape::DrawAll(Widget w)
 
 void Shape::Add(int x1, int y1, int x2, int y2)
 {
-  ShapeProperties s = ShapeProperties(
+  ShapeProperties *s = new ShapeProperties(
     m_shape, m_border, m_line_width, m_fill,
     Colors::Foreground(), Colors::Background()
   );
@@ -112,11 +101,12 @@ void Shape::Add(int x1, int y1, int x2, int y2)
   if(m_shape == Shape::LINE)
   {
     ++m_lines_cnt;
-    s.m_line = (XSegment*) XtMalloc((Cardinal)sizeof(XSegment));
-    s.m_line->x1 = x1;
-    s.m_line->y1 = y1;
-    s.m_line->x2 = x2;
-    s.m_line->y2 = y2;
+    XSegment *line = (XSegment*) XtMalloc((Cardinal)sizeof(XSegment));
+    line->x1 = x1;
+    line->y1 = y1;
+    line->x2 = x2;
+    line->y2 = y2;
+    s->SetLine(line);
   }
   m_shapes.push_back(s);
 }
@@ -126,7 +116,7 @@ int Shape::LinesCount()
   return m_lines_cnt;
 }
 
-std::vector<ShapeProperties> Shape::All()
+std::vector<ShapeProperties*> Shape::All()
 {
   return m_shapes;
 }
