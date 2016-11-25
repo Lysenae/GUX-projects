@@ -9,9 +9,30 @@ Pixel fg, Pixel bg)
   m_filled  = filled;
   m_fg      = fg;
   m_bg      = bg;
-  m_line    = NULL;
-  m_ellipse = NULL;
   m_point   = NULL;
+  m_line    = NULL;
+  m_rect    = NULL;
+  m_ellipse = NULL;
+}
+
+ShapeProperties::~ShapeProperties()
+{
+  if(m_point != NULL)
+  {
+    XtFree((char*)m_point);
+  }
+  else if(m_line != NULL)
+  {
+    XtFree((char*)m_line);
+  }
+  else if(m_rect != NULL)
+  {
+    XtFree((char*)m_rect);
+  }
+  else if(m_ellipse != NULL)
+  {
+    XtFree((char*)m_ellipse);
+  }
 }
 
 int ShapeProperties::Type()
@@ -44,9 +65,19 @@ Pixel ShapeProperties::Background()
   return m_bg;
 }
 
+XPoint *ShapeProperties::Point()
+{
+  return m_point;
+}
+
 XSegment *ShapeProperties::Line()
 {
   return m_line;
+}
+
+XRectangle *ShapeProperties::Rect()
+{
+  return m_rect;
 }
 
 XArc *ShapeProperties::Ellipse()
@@ -54,9 +85,9 @@ XArc *ShapeProperties::Ellipse()
   return m_ellipse;
 }
 
-XPoint *ShapeProperties::Point()
+void ShapeProperties::SetPoint(XPoint *point)
 {
-  return m_point;
+  m_point = point;
 }
 
 void ShapeProperties::SetLine(XSegment *line)
@@ -64,12 +95,12 @@ void ShapeProperties::SetLine(XSegment *line)
   m_line = line;
 }
 
+void ShapeProperties::SetRect(XRectangle *rect)
+{
+  m_rect = rect;
+}
+
 void ShapeProperties::SetEllipse(XArc *ellipse)
 {
   m_ellipse = ellipse;
-}
-
-void ShapeProperties::SetPoint(XPoint *point)
-{
-  m_point = point;
 }

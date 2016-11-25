@@ -96,6 +96,25 @@ void Shape::Draw(Widget w, int x1, int y1, int x2, int y2)
   {
     XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
   }
+  else if(m_shape == Shape::RECT)
+  {
+    width  = Width(x1, x2);
+    height = Height(y1, y2);
+    x = X(x1, x2);
+    y = Y(y1, y2);
+    if(m_fill)
+    {
+      XFillRectangle(XtDisplay(w), XtWindow(w), m_input_gc, x, y, width, height);
+      if(m_border == Shape::BORDER_DOTTED)
+      {
+        XDrawRectangle(XtDisplay(w), XtWindow(w), m_input_gc, x, y, width, height);
+      }
+    }
+    else
+    {
+      XDrawRectangle(XtDisplay(w), XtWindow(w), m_input_gc, x, y, width, height);
+    }
+  }
   else if(m_shape == Shape::ELLIPSE)
   {
     width  = Width(x1, x2);
@@ -149,6 +168,21 @@ void Shape::DrawAll(Widget w)
     else if(shape->Type() == Shape::LINE)
     {
       XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, shape->Line(), 1);
+    }
+    else if(shape->Type() == Shape::RECT)
+    {
+      if(shape->Filled())
+      {
+        XFillRectangles(XtDisplay(w), XtWindow(w), m_draw_gc, shape->Rect(), 1);
+        if(shape->Border() == Shape::BORDER_DOTTED)
+        {
+          XDrawRectangles(XtDisplay(w), XtWindow(w), m_draw_gc, shape->Rect(), 1);
+        }
+      }
+      else
+      {
+        XDrawRectangles(XtDisplay(w), XtWindow(w), m_draw_gc, shape->Rect(), 1);
+      }
     }
     else if(shape->Type() == Shape::ELLIPSE)
     {
@@ -229,6 +263,15 @@ void Shape::Add(int x1, int y1, int x2, int y2)
     line->y2       = y2;
     s->SetLine(line);
   }
+  else if(m_shape == Shape::RECT)
+  {
+    XRectangle *rect = (XRectangle*) XtMalloc((Cardinal)sizeof(XRectangle));
+    rect->x          = X(x1, x2);
+    rect->y          = Y(y1, y2);
+    rect->width      = Width(x1, x2);
+    rect->height     = Height(y1, y2);
+    s->SetRect(rect);
+  }
   else if(m_shape == Shape::ELLIPSE)
   {
     XArc *elps   = (XArc*) XtMalloc((Cardinal)sizeof(XArc));
@@ -248,34 +291,13 @@ std::vector<ShapeProperties*> Shape::All()
   return m_shapes;
 }
 
-
 // *** CLEAR ***
 
 void Shape::ClearAll()
 {
-  ShapeProperties *s = NULL;
   for(unsigned int i=0; i<m_shapes.size(); i++)
   {
-    s = m_shapes[i];
-    if(s->Type() == Shape::POINT)
-    {
-      if(s->LineWidth() == 0)
-      {
-        XtFree((char*)s->Point());
-      }
-      else
-      {
-        XtFree((char*)s->Ellipse());
-      }
-    }
-    else if(s->Type() == Shape::LINE)
-    {
-      XtFree((char*)(s->Line()));
-    }
-    else if(s->Type() == Shape::ELLIPSE)
-    {
-      XtFree((char*)(s->Ellipse()));
-    }
+    delete m_shapes[i];
   }
   m_shapes.clear();
 }

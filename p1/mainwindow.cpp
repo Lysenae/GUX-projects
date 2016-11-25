@@ -325,6 +325,7 @@ void MainWindow::ShowQuitDialog()
     m_msg         = XmStringCreateSimple((char*)"Quit?");
     m_quit        = XmStringCreateSimple((char*)"Quit");
     m_cancel      = XmStringCreateSimple((char*)"Cancel");
+
     XtVaSetValues(
       m_quit_dialog,
       XmNmessageString, m_msg,
@@ -333,6 +334,7 @@ void MainWindow::ShowQuitDialog()
       XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
       NULL
     );
+
     XtAddCallback(m_quit_dialog, XmNokCallback, OnQdQuit, NULL);
     XtAddCallback(m_quit_dialog, XmNcancelCallback, OnQdCancel, NULL);
     m_quit_dlg_exists = true;
@@ -408,7 +410,7 @@ void MainWindow::OnDraw(Widget w, XtPointer client_data, XtPointer call_data)
  **/
 void MainWindow::OnExpose(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  //Shape::InitDrawGC(w);
+  Shape::InitDrawGC(w);
   Shape::DrawAll(w);
 }
 
