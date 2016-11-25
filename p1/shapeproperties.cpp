@@ -1,3 +1,7 @@
+// File:        shapeproperties.cpp
+// Author:      Daniel Klimaj (xklima22)
+// Description: Store shape's properties.
+
 #include "shapeproperties.h"
 
 ShapeProperties::ShapeProperties(int type, int border, int width, bool filled,

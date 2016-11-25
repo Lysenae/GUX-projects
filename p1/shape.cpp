@@ -1,14 +1,18 @@
+// File:        shape.cpp
+// Author:      Daniel Klimaj (xklima22)
+// Description: Set and draw shapes.
+
 #include "shape.h"
 
-bool Shape::m_fill       = false;
-int Shape::m_shape       = Shape::POINT;
-int Shape::m_border      = Shape::BORDER_FULL;
-int Shape::m_line_width  = 1;
+bool Shape::m_fill      = false;
+int Shape::m_shape      = Shape::POINT;
+int Shape::m_border     = Shape::BORDER_FULL;
+int Shape::m_line_width = 1;
 
-GC Shape::m_input_gc     = 0;
-GC Shape::m_draw_gc      = 0;
-Pixel Shape::m_fg        = 0;
-Pixel Shape::m_bg        = 0;
+GC Shape::m_input_gc    = 0;
+GC Shape::m_draw_gc     = 0;
+Pixel Shape::m_fg       = 0;
+Pixel Shape::m_bg       = 0;
 
 std::vector<ShapeProperties*> Shape::m_shapes;
 
@@ -32,11 +36,19 @@ void Shape::SetFill(bool fill)
   m_fill = fill;
 }
 
+///
+/// \brief Get Xlib's id of border type.
+/// \param border int
+///
 int Shape::Border(int border)
 {
   return border == Shape::BORDER_FULL ? LineSolid : LineDoubleDash;
 }
 
+///
+/// \brief Initialize drawing context.
+/// \param w Widget
+///
 void Shape::InitDrawGC(Widget w)
 {
   if(!m_draw_gc)
@@ -45,6 +57,10 @@ void Shape::InitDrawGC(Widget w)
   }
 }
 
+///
+/// \brief Set input context.
+/// \param w Widget
+///
 void Shape::SetInputGC(Widget w)
 {
   if(!m_input_gc)
@@ -57,6 +73,10 @@ void Shape::SetInputGC(Widget w)
   }
 }
 
+///
+/// \brief Set drawing context.
+/// \param w Widget
+///
 void Shape::SetDrawGC(Widget w)
 {
   Arg al[4];
@@ -72,6 +92,14 @@ void Shape::SetDrawGC(Widget w)
   }
 }
 
+///
+/// \brief Draw selected shape with selected properties.
+/// \param w Drawable Widget
+/// \param x1 Initial x coord
+/// \param y1 Initial y coord
+/// \param x2 End x coord
+/// \param y2 End y coord
+///
 void Shape::Draw(Widget w, int x1, int y1, int x2, int y2)
 {
   int width, height, x, y;
@@ -100,8 +128,8 @@ void Shape::Draw(Widget w, int x1, int y1, int x2, int y2)
   {
     width  = Width(x1, x2);
     height = Height(y1, y2);
-    x = X(x1, x2);
-    y = Y(y1, y2);
+    x = Min(x1, x2);
+    y = Min(y1, y2);
     if(m_fill)
     {
       XFillRectangle(XtDisplay(w), XtWindow(w), m_input_gc, x, y, width, height);
@@ -119,8 +147,8 @@ void Shape::Draw(Widget w, int x1, int y1, int x2, int y2)
   {
     width  = Width(x1, x2);
     height = Height(y1, y2);
-    x = X(x1, x2);
-    y = Y(y1, y2);
+    x = Min(x1, x2);
+    y = Min(y1, y2);
     if(m_fill)
     {
       XFillArc(XtDisplay(w), XtWindow(w), m_input_gc, x, y, width, height,
@@ -139,6 +167,10 @@ void Shape::Draw(Widget w, int x1, int y1, int x2, int y2)
   }
 }
 
+///
+/// \brief Draw all stored shapes.
+/// \param w Drawable Widget
+///
 void Shape::DrawAll(Widget w)
 {
   for(unsigned int i=0; i<m_shapes.size(); ++i)
@@ -202,6 +234,10 @@ void Shape::DrawAll(Widget w)
   }
 }
 
+///
+/// \brief Set input context according to selected properties.
+/// \param w Drawable Widget
+///
 void Shape::SetInputStyle(Widget w)
 {
   XGCValues gcv;
@@ -213,6 +249,10 @@ void Shape::SetInputStyle(Widget w)
   XChangeGC(XtDisplay(w), m_input_gc, mask, &gcv);
 }
 
+///
+/// \brief Set drawing context according to selected properties.
+/// \param w Drawable Widget
+///
 void Shape::SetDrawStyle(Widget w)
 {
   XGCValues gcv;
@@ -224,8 +264,13 @@ void Shape::SetDrawStyle(Widget w)
   XChangeGC(XtDisplay(w), m_draw_gc, mask, &gcv);
 }
 
-// *** LINES ***
-
+///
+/// \brief Store shape.
+/// \param x1 Initial x coord
+/// \param y1 Initial y coord
+/// \param x2 End x coord
+/// \param y2 End y coord
+///
 void Shape::Add(int x1, int y1, int x2, int y2)
 {
   ShapeProperties *s = new ShapeProperties(
@@ -266,8 +311,8 @@ void Shape::Add(int x1, int y1, int x2, int y2)
   else if(m_shape == Shape::RECT)
   {
     XRectangle *rect = (XRectangle*) XtMalloc((Cardinal)sizeof(XRectangle));
-    rect->x          = X(x1, x2);
-    rect->y          = Y(y1, y2);
+    rect->x          = Min(x1, x2);
+    rect->y          = Min(y1, y2);
     rect->width      = Width(x1, x2);
     rect->height     = Height(y1, y2);
     s->SetRect(rect);
@@ -275,8 +320,8 @@ void Shape::Add(int x1, int y1, int x2, int y2)
   else if(m_shape == Shape::ELLIPSE)
   {
     XArc *elps   = (XArc*) XtMalloc((Cardinal)sizeof(XArc));
-    elps->x      = X(x1, x2);
-    elps->y      = Y(y1, y2);
+    elps->x      = Min(x1, x2);
+    elps->y      = Min(y1, y2);
     elps->width  = Width(x1, x2);
     elps->height = Height(y1, y2);
     elps->angle1 = Shape::ANGLE1;
@@ -291,8 +336,6 @@ std::vector<ShapeProperties*> Shape::All()
   return m_shapes;
 }
 
-// *** CLEAR ***
-
 void Shape::ClearAll()
 {
   for(unsigned int i=0; i<m_shapes.size(); i++)
@@ -302,22 +345,32 @@ void Shape::ClearAll()
   m_shapes.clear();
 }
 
+///
+/// \brief Calculate shape's width.
+/// \param x1 First x coord
+/// \param x2 Second x coord
+///
 int Shape::Width(int x1, int x2)
 {
   return x1 >= x2 ? x1 - x2 : x2 - x1;
 }
 
+///
+/// \brief Calculate shape's height.
+/// \param y1 First y coord
+/// \param y2 Second y coord
+///
 int Shape::Height(int y1, int y2)
 {
   return y1 >= y2 ? y1 - y2 : y2 - y1;
 }
 
-int Shape::X(int x1, int x2)
+///
+/// \brief Get lower value.
+/// \param f First coord
+/// \param s Second coord
+///
+int Shape::Min(int f, int s)
 {
-  return x1 <= x2 ? x1 : x2;
-}
-
-int Shape::Y(int y1, int y2)
-{
-  return y1 <= y2 ? y1 : y2;
+  return f <= s ? f : s;
 }

@@ -1,3 +1,7 @@
+// File:        mainwindow.h
+// Author:      Daniel Klimaj (xklima22)
+// Description: Main application window and widgets.
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 

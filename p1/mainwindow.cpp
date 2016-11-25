@@ -1,4 +1,6 @@
-// GUX Project #1 - Simple graphic editor
+// File:        mainwindow.cpp
+// Author:      Daniel Klimaj (xklima22)
+// Description: Main application window and widgets.
 
 #include "mainwindow.h"
 
@@ -22,6 +24,11 @@ Widget MainWindow::m_bg_cb         = 0;
 bool MainWindow::m_quit_dlg_exists = false;
 Widget MainWindow::m_quit_dialog   = 0;
 
+///
+/// \brief Constructor.
+/// \param argc Command line arguments count
+/// \param argv Command line arguments
+///
 MainWindow::MainWindow(int argc, char **argv)
 {
   XtSetLanguageProc(NULL, (XtLanguageProc)NULL, NULL);
@@ -135,17 +142,26 @@ MainWindow::MainWindow(int argc, char **argv)
   XtRealizeWidget(m_top_level);
 }
 
+///
+/// \brief Destructor.
+///
 MainWindow::~MainWindow()
 {
   Shape::ClearAll();
 }
 
+///
+/// \brief Run main loop.
+///
 int MainWindow::run()
 {
   XtAppMainLoop(m_app_context);
   return 0;
 }
 
+///
+/// \brief Create menubar and menus.
+///
 void MainWindow::CreateMenu()
 {
   Arg args[3];
@@ -181,6 +197,9 @@ void MainWindow::CreateMenu()
   XtManageChild(m_menu_bar);
 }
 
+///
+/// \brief Create tool window.
+///
 void MainWindow::CreateTools()
 {
   XmString label;
@@ -312,6 +331,9 @@ void MainWindow::CreateTools()
   XtAddCallback(m_fill_btn, XmNvalueChangedCallback, OnFillToggled, NULL);
 }
 
+///
+/// \brief Show dialog when attempting to quit the application.
+///
 void MainWindow::ShowQuitDialog()
 {
   XmString m_msg;
@@ -336,7 +358,6 @@ void MainWindow::ShowQuitDialog()
     );
 
     XtAddCallback(m_quit_dialog, XmNokCallback, OnQdQuit, NULL);
-    XtAddCallback(m_quit_dialog, XmNcancelCallback, OnQdCancel, NULL);
     m_quit_dlg_exists = true;
 
     XmStringFree(m_msg);
@@ -348,6 +369,13 @@ void MainWindow::ShowQuitDialog()
 
 // *** PRIVATE ***
 
+///
+/// \brief Handles draw event (Mouse press).
+/// \param w Widget
+/// \param client_data XtPointer
+/// \param event XEvent*
+/// \param cont Boolean*
+///
 void MainWindow::HandleDraw(Widget w, XtPointer client_data, XEvent *event,
 Boolean *cont)
 {
@@ -371,6 +399,12 @@ Boolean *cont)
   }
 }
 
+///
+/// \brief Draw callback (Mouse move, mouse release).
+/// \param w Widget
+/// \param client_data XtPointer
+/// \param call_data XtPointer
+///
 void MainWindow::OnDraw(Widget w, XtPointer client_data, XtPointer call_data)
 {
   XmDrawingAreaCallbackStruct *d = (XmDrawingAreaCallbackStruct*)call_data;
@@ -405,18 +439,24 @@ void MainWindow::OnDraw(Widget w, XtPointer client_data, XtPointer call_data)
   }
 }
 
-/**
- * "Expose" callback function
- **/
+///
+/// \brief Expose callback.
+/// \param w Widget
+/// \param client_data XtPointer
+/// \param call_data XtPointer
+///
 void MainWindow::OnExpose(Widget w, XtPointer client_data, XtPointer call_data)
 {
   Shape::InitDrawGC(w);
   Shape::DrawAll(w);
 }
 
-/**
- * "Clear" button callback function
- **/
+///
+/// \brief Clear callback. Remove all shapes from draw area.
+/// \param w Widget
+/// \param client_data XtPointer
+/// \param call_data XtPointer
+///
 void MainWindow::OnClear(Widget w, XtPointer client_data, XtPointer call_data)
 {
   Widget wcd = (Widget) client_data;
@@ -424,14 +464,23 @@ void MainWindow::OnClear(Widget w, XtPointer client_data, XtPointer call_data)
   XClearWindow(XtDisplay(wcd), XtWindow(wcd));
 }
 
-/**
- * "Quit" button callback function
- **/
+///
+/// \brief Quit callback. Show confirmation dialog.
+/// \param w Widget
+/// \param client_data XtPointer
+/// \param call_data XtPointer
+///
 void MainWindow::OnQuit(Widget w, XtPointer client_data, XtPointer call_data)
 {
   ShowQuitDialog();
 }
 
+///
+/// \brief Change currenlty selected shape to draw.
+/// \param w Widget
+/// \param client_data XtPointer
+/// \param call_data XtPointer
+///
 void MainWindow::OnShapeToggled(Widget w, XtPointer client_data,
 XtPointer call_data)
 {
@@ -473,6 +522,12 @@ XtPointer call_data)
   }
 }
 
+///
+/// \brief Change currently selected border type of the shape.
+/// \param w Widget
+/// \param client_data XtPointer
+/// \param call_data XtPointer
+///
 void MainWindow::OnBorderToggled(Widget w, XtPointer client_data,
 XtPointer call_data)
 {
@@ -494,6 +549,12 @@ XtPointer call_data)
   }
 }
 
+///
+/// \brief Change property whether ellipses and rectangles should be filled.
+/// \param w Widget
+/// \param client_data XtPointer
+/// \param call_data XtPointer
+///
 void MainWindow::OnFillToggled(Widget w, XtPointer client_data,
 XtPointer call_data)
 {
@@ -507,6 +568,12 @@ XtPointer call_data)
   }
 }
 
+///
+/// \brief Change current foreground or background color.
+/// \param w Widget
+/// \param client_data XtPointer
+/// \param call_data XtPointer
+///
 void MainWindow::OnColorChanged(Widget w, XtPointer client_data,
 XtPointer call_data)
 {
@@ -526,6 +593,12 @@ XtPointer call_data)
   }
 }
 
+///
+/// \brief Change line width (or border width in case of ellipses and rectangles).
+/// \param w Widget
+/// \param client_data XtPointer
+/// \param call_data XtPointer
+///
 void MainWindow::OnLineWidthChanged(Widget w, XtPointer client_data,
 XtPointer call_data)
 {
@@ -533,13 +606,14 @@ XtPointer call_data)
   Shape::SetLineWidth(cbcs->value);
 }
 
+///
+/// \brief Quit application.
+/// \param w Widget
+/// \param client_data XtPointer
+/// \param call_data XtPointer
+///
 void MainWindow::OnQdQuit(Widget w, XtPointer client_data,
 XtPointer call_data)
 {
   exit(0);
-}
-
-void MainWindow::OnQdCancel(Widget w, XtPointer client_data,
-XtPointer call_data)
-{
 }

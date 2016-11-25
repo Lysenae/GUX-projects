@@ -1,5 +1,6 @@
-#include <X11/Intrinsic.h>
-#include <Xm/Xm.h>
+// File:        editor.cpp
+// Author:      Daniel Klimaj (xklima22)
+// Description: Main file.
 
 #include "mainwindow.h"
 

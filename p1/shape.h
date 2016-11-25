@@ -1,3 +1,7 @@
+// File:        shape.h
+// Author:      Daniel Klimaj (xklima22)
+// Description: Set and draw shapes.
+
 #ifndef SHAPE_H
 #define SHAPE_H
 
@@ -58,8 +62,7 @@ private:
 
   static int Width(int x1, int x2);
   static int Height(int y1, int y2);
-  static int X(int x1, int x2);
-  static int Y(int y1, int y2);
+  static int Min(int x1, int x2);
 };
 
 #endif // LINES_H

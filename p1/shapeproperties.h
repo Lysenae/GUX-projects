@@ -1,3 +1,7 @@
+// File:        shapeproperties.h
+// Author:      Daniel Klimaj (xklima22)
+// Description: Store shape's properties.
+
 #ifndef SHAPEPROPS_H
 #define SHAPEPROPS_H
 

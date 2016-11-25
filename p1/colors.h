@@ -1,3 +1,7 @@
+// File:        colors.h
+// Author:      Daniel Klimaj (xklima22)
+// Description: Initializes and sets colors.
+
 #ifndef COLORS_H
 #define COLORS_H
 
