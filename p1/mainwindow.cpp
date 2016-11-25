@@ -21,10 +21,6 @@ Widget MainWindow::m_fill_btn      = 0;
 Widget MainWindow::m_line_width_sc = 0;
 Widget MainWindow::m_fg_cb         = 0;
 Widget MainWindow::m_bg_cb         = 0;
-int MainWindow::m_shape            = Shape::POINT;
-int MainWindow::m_border           = Shape::BORDER_FULL;
-bool MainWindow::m_fill            = false;
-int MainWindow::m_line_width       = 1;
 bool MainWindow::m_quit_dlg_exists = false;
 Widget MainWindow::m_quit_dialog   = 0;
 
@@ -153,7 +149,7 @@ XtPointer call_data)
     XmToggleButtonSetState(m_shape_line, False, False);
     XmToggleButtonSetState(m_shape_rect, False, False);
     XmToggleButtonSetState(m_shape_ellipse, False, False);
-    m_shape = Shape::POINT;
+    Shape::SetShape(Shape::POINT);
   }
   else if(w == m_shape_line)
   {
@@ -161,7 +157,7 @@ XtPointer call_data)
     XmToggleButtonSetState(m_shape_line, True, False);
     XmToggleButtonSetState(m_shape_rect, False, False);
     XmToggleButtonSetState(m_shape_ellipse, False, False);
-    m_shape = Shape::LINE;
+    Shape::SetShape(Shape::LINE);
   }
   else if(w == m_shape_rect)
   {
@@ -169,7 +165,7 @@ XtPointer call_data)
     XmToggleButtonSetState(m_shape_line, False, False);
     XmToggleButtonSetState(m_shape_rect, True, False);
     XmToggleButtonSetState(m_shape_ellipse, False, False);
-    m_shape = Shape::RECT;
+    Shape::SetShape(Shape::RECT);
   }
   else if(w == m_shape_ellipse)
   {
@@ -177,14 +173,12 @@ XtPointer call_data)
     XmToggleButtonSetState(m_shape_line, False, False);
     XmToggleButtonSetState(m_shape_rect, False, False);
     XmToggleButtonSetState(m_shape_ellipse, True, False);
-    m_shape = Shape::ELLIPSE;
+    Shape::SetShape(Shape::ELLIPSE);
   }
   else
   {
     std::cerr << "Invalid shape button ID" << std::endl;
   }
-
-  std::cout << "Shape: " << m_shape << std::endl;
 }
 
 void MainWindow::OnBorderToggled(Widget w, XtPointer client_data,
@@ -194,20 +188,18 @@ XtPointer call_data)
   {
     XmToggleButtonSetState(m_border_full, True, False);
     XmToggleButtonSetState(m_border_dotted, False, False);
-    m_border = Shape::BORDER_FULL;
+    Shape::SetBorder(Shape::BORDER_FULL);
   }
   else if(w == m_border_dotted)
   {
     XmToggleButtonSetState(m_border_full, False, False);
     XmToggleButtonSetState(m_border_dotted, True, False);
-    m_border = Shape::BORDER_DOTTED;
+    Shape::SetBorder(Shape::BORDER_DOTTED);
   }
   else
   {
     std::cerr << "Invalid border type ID" << std::endl;
   }
-
-  std::cout << "Border: " << m_border << std::endl;
 }
 
 void MainWindow::OnFillToggled(Widget w, XtPointer client_data,
@@ -215,14 +207,12 @@ XtPointer call_data)
 {
   if(XmToggleButtonGetState(w) == True)
   {
-    m_fill = true;
+    Shape::SetFill(true);
   }
   else
   {
-    m_fill = false;
+    Shape::SetFill(false);
   }
-
-  std::cout << "Fill: " << m_fill << std::endl;
 }
 
 void MainWindow::OnColorChanged(Widget w, XtPointer client_data,
@@ -233,12 +223,10 @@ XtPointer call_data)
   if(w == m_fg_cb)
   {
     Colors::SetForeground(item);
-    std::cout << "FG: " << Colors::Name(item) << std::endl;
   }
   else if(w == m_bg_cb)
   {
     Colors::SetBackground(item);
-    std::cout << "BG: " << Colors::Name(item) << std::endl;
   }
   else
   {
@@ -250,8 +238,7 @@ void MainWindow::OnLineWidthChanged(Widget w, XtPointer client_data,
 XtPointer call_data)
 {
   XmScaleCallbackStruct *cbcs = (XmScaleCallbackStruct*)call_data;
-  m_line_width = cbcs->value;
-  std::cout << "Line Width: " << m_line_width << std::endl;
+  Shape::SetLineWidth(cbcs->value);
 }
 
 /**
@@ -277,7 +264,6 @@ MainWindow::MainWindow(int argc, char **argv)
     std::cerr << "Failed to initialize colors!" << std::endl;
     exit(1);
   }
-  std::cout << "Colors: " << Colors::Count() << std::endl;
 
   m_main_win = XtVaCreateManagedWidget(
     "mainWin",
@@ -583,12 +569,10 @@ void MainWindow::ShowQuitDialog()
 void MainWindow::OnQdQuit(Widget w, XtPointer client_data,
 XtPointer call_data)
 {
-  std::cout << "QuitDialog: Quit" << std::endl;
   exit(0);
 }
 
 void MainWindow::OnQdCancel(Widget w, XtPointer client_data,
 XtPointer call_data)
 {
-  std::cout << "QuitDialog: Cancel" << std::endl;
 }

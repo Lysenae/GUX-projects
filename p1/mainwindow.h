@@ -55,11 +55,6 @@ private:
   static int m_button_pressed; // input state
   static int x1, y1, x2, y2;   // input coords
 
-  static int m_shape;
-  static int m_border;
-  static bool m_fill;
-  static int m_line_width;
-
   Widget m_top_level;
   static Widget m_main_win;
   Widget m_frame;
