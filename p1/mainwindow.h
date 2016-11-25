@@ -23,7 +23,7 @@
 #include <iostream>
 
 #include "colors.h"
-#include "lines.h"
+#include "shape.h"
 
 class MainWindow
 {
@@ -50,18 +50,11 @@ public:
     XtPointer call_data);
 
 private:
-  static Lines *m_lines;       // array of line descriptors
   static GC m_draw_gc;         // GC used for final drawing
   static GC m_input_gc;        // GC used for drawing current position
   static int m_button_pressed; // input state
   static int x1, y1, x2, y2;   // input coords
 
-  static const int SHAPE_POINT   = 0;
-  static const int SHAPE_LINE    = 1;
-  static const int SHAPE_RECT    = 2;
-  static const int SHAPE_ELLIPSE = 3;
-  static const int BORDER_FULL   = 0;
-  static const int BORDER_DOTTED = 1;
   static int m_shape;
   static int m_border;
   static bool m_fill;

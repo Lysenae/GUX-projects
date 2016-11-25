@@ -3,8 +3,8 @@
 #include <Motif.rules>
 
 TARGET = editor
-SRCS = editor.cpp mainwindow.cpp colors.cpp lines.cpp
-OBJS = editor.o mainwindow.o colors.o lines.o
+SRCS = editor.cpp mainwindow.cpp colors.cpp shape.cpp
+OBJS = editor.o mainwindow.o colors.o shape.o
 
 CC=g++
 CCOPTIONS=-O -Wall -fno-builtin

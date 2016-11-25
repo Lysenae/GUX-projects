@@ -3,7 +3,6 @@
 #include "mainwindow.h"
 
 // Init static variables
-Lines *MainWindow::m_lines         = new Lines();
 GC MainWindow::m_draw_gc           = 0;
 GC MainWindow::m_input_gc          = 0;
 int MainWindow::m_button_pressed   = 0;
@@ -22,8 +21,8 @@ Widget MainWindow::m_fill_btn      = 0;
 Widget MainWindow::m_line_width_sc = 0;
 Widget MainWindow::m_fg_cb         = 0;
 Widget MainWindow::m_bg_cb         = 0;
-int MainWindow::m_shape            = MainWindow::SHAPE_POINT;
-int MainWindow::m_border           = MainWindow::BORDER_FULL;
+int MainWindow::m_shape            = Shape::POINT;
+int MainWindow::m_border           = Shape::BORDER_FULL;
 bool MainWindow::m_fill            = false;
 int MainWindow::m_line_width       = 1;
 bool MainWindow::m_quit_dlg_exists = false;
@@ -92,7 +91,7 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
     {
       if(d->event->xbutton.button == Button1)
       {
-        m_lines->add(x1, y1, d->event->xbutton.x, d->event->xbutton.y);
+        Shape::AddLine(x1, y1, d->event->xbutton.x, d->event->xbutton.y);
         m_button_pressed = 0;
 
         if(!m_draw_gc)
@@ -117,13 +116,13 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
  **/
 void MainWindow::ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  if(m_lines->count() <= 0)
+  if(Shape::LinesCount() <= 0)
     return;
   if(!m_draw_gc)
     m_draw_gc = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
 
-  XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, m_lines->lines(),
-    m_lines->count());
+  XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, Shape::Lines(),
+    Shape::LinesCount());
 }
 
 /**
@@ -133,7 +132,7 @@ void MainWindow::ClearCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
   Widget wcd = (Widget) client_data;
 
-  m_lines->clear();
+  Shape::ClearAll();
   XClearWindow(XtDisplay(wcd), XtWindow(wcd));
 }
 
@@ -154,7 +153,7 @@ XtPointer call_data)
     XmToggleButtonSetState(m_shape_line, False, False);
     XmToggleButtonSetState(m_shape_rect, False, False);
     XmToggleButtonSetState(m_shape_ellipse, False, False);
-    m_shape = SHAPE_POINT;
+    m_shape = Shape::POINT;
   }
   else if(w == m_shape_line)
   {
@@ -162,7 +161,7 @@ XtPointer call_data)
     XmToggleButtonSetState(m_shape_line, True, False);
     XmToggleButtonSetState(m_shape_rect, False, False);
     XmToggleButtonSetState(m_shape_ellipse, False, False);
-    m_shape = SHAPE_LINE;
+    m_shape = Shape::LINE;
   }
   else if(w == m_shape_rect)
   {
@@ -170,7 +169,7 @@ XtPointer call_data)
     XmToggleButtonSetState(m_shape_line, False, False);
     XmToggleButtonSetState(m_shape_rect, True, False);
     XmToggleButtonSetState(m_shape_ellipse, False, False);
-    m_shape = SHAPE_RECT;
+    m_shape = Shape::RECT;
   }
   else if(w == m_shape_ellipse)
   {
@@ -178,7 +177,7 @@ XtPointer call_data)
     XmToggleButtonSetState(m_shape_line, False, False);
     XmToggleButtonSetState(m_shape_rect, False, False);
     XmToggleButtonSetState(m_shape_ellipse, True, False);
-    m_shape = SHAPE_ELLIPSE;
+    m_shape = Shape::ELLIPSE;
   }
   else
   {
@@ -195,13 +194,13 @@ XtPointer call_data)
   {
     XmToggleButtonSetState(m_border_full, True, False);
     XmToggleButtonSetState(m_border_dotted, False, False);
-    m_border = BORDER_FULL;
+    m_border = Shape::BORDER_FULL;
   }
   else if(w == m_border_dotted)
   {
     XmToggleButtonSetState(m_border_full, False, False);
     XmToggleButtonSetState(m_border_dotted, True, False);
-    m_border = BORDER_DOTTED;
+    m_border = Shape::BORDER_DOTTED;
   }
   else
   {
@@ -374,7 +373,7 @@ MainWindow::MainWindow(int argc, char **argv)
 
 MainWindow::~MainWindow()
 {
-  delete m_lines;
+  Shape::FreeAll();
 }
 
 int MainWindow::run()
