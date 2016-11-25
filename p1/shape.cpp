@@ -80,6 +80,21 @@ void Shape::Draw(Widget w, int x1, int y1, int x2, int y2)
   {
     XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
   }
+  else if(m_shape == Shape::ELLIPSE)
+  {
+    int width  = Width(x1, x2);
+    int height = Height(y1, y2);
+    if(m_fill)
+    {
+      XFillArc(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, width, height,
+        Shape::ANGLE1, Shape::ANGLE2);
+    }
+    else
+    {
+      XDrawArc(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, width, height,
+        Shape::ANGLE1, Shape::ANGLE2);
+    }
+  }
 }
 
 void Shape::DrawAll(Widget w)
@@ -169,4 +184,14 @@ void Shape::ClearAll()
     }
   }
   m_shapes.clear();
+}
+
+int Shape::Width(int x1, int x2)
+{
+  return x1 >= x2 ? x1 - x2 : x2 - x1;
+}
+
+int Shape::Height(int y1, int y2)
+{
+  return y1 >= y2 ? y1 - y2 : y2 - y1;
 }

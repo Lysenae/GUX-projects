@@ -14,8 +14,10 @@ public:
   Pixel Foreground();
   Pixel Background();
   XSegment *Line();
+  XArc *Ellipse();
 
   void SetLine(XSegment *line);
+  void SetEllipse(XArc *ellipse);
 
 private:
   int       m_type;
@@ -25,6 +27,7 @@ private:
   Pixel     m_fg;
   Pixel     m_bg;
   XSegment *m_line;
+  XArc     *m_ellipse;
 };
 
 #endif // SHAPEPROPS_H

@@ -40,6 +40,8 @@ public:
   static const int ELLIPSE       = 3;
   static const int BORDER_FULL   = 0;
   static const int BORDER_DOTTED = 1;
+  static const int ANGLE1        = 0;
+  static const int ANGLE2        = 23040; // 360*64
 
 private:
   static bool m_fill;
@@ -54,6 +56,9 @@ private:
 
   static std::vector<ShapeProperties*> m_shapes;
   static int m_lines_cnt;
+
+  static int Width(int x1, int x2);
+  static int Height(int y1, int y2);
 };
 
 #endif // LINES_H

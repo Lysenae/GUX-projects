@@ -3,13 +3,14 @@
 ShapeProperties::ShapeProperties(int type, int border, int width, bool filled,
 Pixel fg, Pixel bg)
 {
-  m_type   = type;
-  m_border = border;
-  m_width  = width;
-  m_filled = filled;
-  m_fg     = fg;
-  m_bg     = bg;
-  m_line   = NULL;
+  m_type    = type;
+  m_border  = border;
+  m_width   = width;
+  m_filled  = filled;
+  m_fg      = fg;
+  m_bg      = bg;
+  m_line    = NULL;
+  m_ellipse = NULL;
 }
 
 int ShapeProperties::Type()
@@ -42,7 +43,17 @@ XSegment *ShapeProperties::Line()
   return m_line;
 }
 
+XArc *ShapeProperties::Ellipse()
+{
+  return m_ellipse;
+}
+
 void ShapeProperties::SetLine(XSegment *line)
 {
   m_line = line;
+}
+
+void ShapeProperties::SetEllipse(XArc *ellipse)
+{
+  m_ellipse = ellipse;
 }
