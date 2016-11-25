@@ -17,6 +17,7 @@ public:
   static void SetBorder(int border);
   static void SetLineWidth(int width);
   static void SetFill(bool fill);
+  static int Border(int border);
 
   static void InitDrawGC(Widget w);
   static void SetInputGC(Widget w);
@@ -24,6 +25,8 @@ public:
 
   static void Draw(Widget w, int x1, int y1, int x2, int y2);
   static void DrawAll(Widget w);
+  static void SetInputStyle(Widget w);
+  static void SetDrawStyle(Widget w);
 
   static void Add(int x1, int y1, int x2, int y2);
   static int LinesCount();

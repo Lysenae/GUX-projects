@@ -35,6 +35,11 @@ void Shape::SetFill(bool fill)
   m_fill = fill;
 }
 
+int Shape::Border(int border)
+{
+  return border == Shape::BORDER_FULL ? LineSolid : LineDoubleDash;
+}
+
 void Shape::InitDrawGC(Widget w)
 {
   if(!m_draw_gc)
@@ -82,11 +87,41 @@ void Shape::DrawAll(Widget w)
 {
   for(unsigned int i=0; i<m_shapes.size(); ++i)
   {
+    XGCValues gcv;
+    gcv.line_style     = Border(m_shapes[i]->Border());
+    gcv.line_width     = m_shapes[i]->LineWidth();
+    gcv.foreground     = m_shapes[i]->Foreground();
+    gcv.background     = m_shapes[i]->Background();
+    unsigned long mask = GCForeground | GCBackground | GCLineWidth | GCLineStyle;
+    XChangeGC(XtDisplay(w), m_draw_gc, mask, &gcv);
+    
     if(m_shapes[i]->Type() == Shape::LINE)
     {
       XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, m_shapes[i]->Line(), 1);
     }
   }
+}
+
+void Shape::SetInputStyle(Widget w)
+{
+  XGCValues gcv;
+  gcv.line_style     = Border(m_border);
+  gcv.line_width     = m_line_width;
+  gcv.foreground     = Colors::Foreground() ^ m_bg;
+  gcv.background     = Colors::Background() ^ m_bg;
+  unsigned long mask = GCForeground | GCBackground | GCLineWidth | GCLineStyle;
+  XChangeGC(XtDisplay(w), m_input_gc, mask, &gcv);
+}
+
+void Shape::SetDrawStyle(Widget w)
+{
+  XGCValues gcv;
+  gcv.line_style     = Border(m_border);
+  gcv.line_width     = m_line_width;
+  gcv.foreground     = Colors::Foreground();
+  gcv.background     = Colors::Background();
+  unsigned long mask = GCForeground | GCBackground | GCLineWidth | GCLineStyle;
+  XChangeGC(XtDisplay(w), m_draw_gc, mask, &gcv);
 }
 
 // *** LINES ***

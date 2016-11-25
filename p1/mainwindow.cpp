@@ -352,6 +352,7 @@ Boolean *cont)
   if(m_button_pressed)
   {
     Shape::SetInputGC(w);
+    Shape::SetInputStyle(w);
 
     if(m_button_pressed > 1)
     {
@@ -393,6 +394,7 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
         Shape::Add(x1, y1, x2, y2);
         m_button_pressed = 0;
         Shape::SetDrawGC(w);
+        Shape::SetDrawStyle(w);
         Shape::Draw(w, x1, y1, x2, y2);
         XClearArea(XtDisplay(w), XtWindow(w), 0, 0, 0, 0, True);
       }
@@ -411,7 +413,7 @@ void MainWindow::ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
     return;
   }
 
-  Shape::InitDrawGC(w);
+  //Shape::InitDrawGC(w);
   Shape::DrawAll(w);
 }
 
