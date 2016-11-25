@@ -33,7 +33,6 @@ public:
   static std::vector<ShapeProperties*> All();
 
   static void ClearAll();
-  static void FreeAll();
 
   static const int POINT         = 0;
   static const int LINE          = 1;
@@ -55,7 +54,6 @@ private:
 
   static std::vector<ShapeProperties*> m_shapes;
   static int m_lines_cnt;
-  static int m_max_lines;
 };
 
 #endif // LINES_H

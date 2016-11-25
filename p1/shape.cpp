@@ -10,10 +10,9 @@ GC Shape::m_draw_gc      = 0;
 Pixel Shape::m_fg        = 0;
 Pixel Shape::m_bg        = 0;
 
-std::vector<ShapeProperties*> Shape::m_shapes;
-
 int Shape::m_lines_cnt   = 0;
-int Shape::m_max_lines   = 0;
+
+std::vector<ShapeProperties*> Shape::m_shapes;
 
 void Shape::SetShape(int shape)
 {
@@ -161,12 +160,13 @@ std::vector<ShapeProperties*> Shape::All()
 
 void Shape::ClearAll()
 {
-  m_max_lines = 0;
   m_lines_cnt = 0;
-}
-
-void Shape::FreeAll()
-{
-  ClearAll();
-  //XtFree((char*)m_lines);
+  for(unsigned int i=0; i<m_shapes.size(); i++)
+  {
+    if(m_shapes[i]->Type() == Shape::LINE)
+    {
+      XtFree((char*)(m_shapes[i]->Line()));
+    }
+  }
+  m_shapes.clear();
 }

@@ -137,7 +137,7 @@ MainWindow::MainWindow(int argc, char **argv)
 
 MainWindow::~MainWindow()
 {
-  Shape::FreeAll();
+  Shape::ClearAll();
 }
 
 int MainWindow::run()
