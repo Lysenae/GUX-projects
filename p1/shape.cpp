@@ -5,6 +5,11 @@ int Shape::m_shape       = Shape::POINT;
 int Shape::m_border      = Shape::BORDER_FULL;
 int Shape::m_line_width  = 1;
 
+GC Shape::m_input_gc     = 0;
+GC Shape::m_draw_gc      = 0;
+Pixel Shape::m_fg        = 0;
+Pixel Shape::m_bg        = 0;
+
 XSegment *Shape::m_lines = 0;
 int Shape::m_lines_cnt   = 0;
 int Shape::m_max_lines   = 0;
@@ -27,6 +32,51 @@ void Shape::SetLineWidth(int width)
 void Shape::SetFill(bool fill)
 {
   m_fill = fill;
+}
+
+void Shape::InitDrawGC(Widget w)
+{
+  if(!m_draw_gc)
+  {
+    m_draw_gc = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
+  }
+}
+
+void Shape::SetInputGC(Widget w)
+{
+  if(!m_input_gc)
+  {
+    m_input_gc = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
+    XSetFunction(XtDisplay(w), m_input_gc, GXxor);
+    XSetPlaneMask(XtDisplay(w), m_input_gc, ~0);
+    XtVaGetValues(w, XmNforeground, &m_fg, XmNbackground, &m_bg, NULL);
+    XSetForeground(XtDisplay(w), m_input_gc, m_fg ^ m_bg);
+  }
+}
+
+void Shape::SetDrawGC(Widget w)
+{
+  Arg al[4];
+  int ac;
+  XGCValues v;
+
+  if(!m_draw_gc)
+  {
+    ac = 0;
+    XtSetArg(al[ac], XmNforeground, &v.foreground); ac++;
+    XtGetValues(w, al, ac);
+    m_draw_gc = XCreateGC(XtDisplay(w), XtWindow(w), GCForeground, &v);
+  }
+}
+
+void Shape::Draw(Widget w, int x1, int y1, int x2, int y2)
+{
+  XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
+}
+
+void Shape::DrawAll(Widget w)
+{
+  XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, Lines(), LinesCount());
 }
 
 // *** LINES ***

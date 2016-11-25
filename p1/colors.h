@@ -1,5 +1,5 @@
 #ifndef COLORS_H
-#define COLORS_h
+#define COLORS_H
 
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>

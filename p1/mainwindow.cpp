@@ -3,8 +3,6 @@
 #include "mainwindow.h"
 
 // Init static variables
-GC MainWindow::m_draw_gc           = 0;
-GC MainWindow::m_input_gc          = 0;
 int MainWindow::m_button_pressed   = 0;
 int MainWindow::x1                 = 0;
 int MainWindow::x2                 = 0;
@@ -351,22 +349,13 @@ void MainWindow::ShowQuitDialog()
 void MainWindow::DrawEH(Widget w, XtPointer client_data, XEvent *event,
 Boolean *cont)
 {
-  Pixel fg, bg;
-
   if(m_button_pressed)
   {
-    if(!m_input_gc)
-    {
-      m_input_gc = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
-      XSetFunction(XtDisplay(w), m_input_gc, GXxor);
-      XSetPlaneMask(XtDisplay(w), m_input_gc, ~0);
-      XtVaGetValues(w, XmNforeground, &fg, XmNbackground, &bg, NULL);
-      XSetForeground(XtDisplay(w), m_input_gc, fg ^ bg);
-    }
+    Shape::SetInputGC(w);
 
     if(m_button_pressed > 1)
     {
-      XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
+      Shape::Draw(w, x1, y1, x2, y2);
     }
     else
     {
@@ -375,17 +364,13 @@ Boolean *cont)
 
     x2 = event->xmotion.x;
     y2 = event->xmotion.y;
-
-    XDrawLine(XtDisplay(w), XtWindow(w), m_input_gc, x1, y1, x2, y2);
+    Shape::Draw(w, x1, y1, x2, y2);
   }
 }
 
 void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
-  Arg al[4];
-  int ac;
-  XGCValues v;
-  XmDrawingAreaCallbackStruct *d = (XmDrawingAreaCallbackStruct*) call_data;
+  XmDrawingAreaCallbackStruct *d = (XmDrawingAreaCallbackStruct*)call_data;
 
   switch (d->event->type)
   {
@@ -405,18 +390,8 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
       {
         Shape::AddLine(x1, y1, d->event->xbutton.x, d->event->xbutton.y);
         m_button_pressed = 0;
-
-        if(!m_draw_gc)
-        {
-          ac = 0;
-          XtSetArg(al[ac], XmNforeground, &v.foreground); ac++;
-          XtGetValues(w, al, ac);
-          m_draw_gc = XCreateGC(XtDisplay(w), XtWindow(w),
-          GCForeground, &v);
-        }
-        XDrawLine(XtDisplay(w), XtWindow(w), m_draw_gc,
-          x1, y1, d->event->xbutton.x, d->event->xbutton.y
-        );
+        Shape::SetDrawGC(w);
+        Shape::Draw(w, x1, y1, d->event->xbutton.x, d->event->xbutton.y);
       }
       break;
     }
@@ -429,12 +404,12 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
 void MainWindow::ExposeCB(Widget w, XtPointer client_data, XtPointer call_data)
 {
   if(Shape::LinesCount() <= 0)
+  {
     return;
-  if(!m_draw_gc)
-    m_draw_gc = XCreateGC(XtDisplay(w), XtWindow(w), 0, NULL);
+  }
 
-  XDrawSegments(XtDisplay(w), XtWindow(w), m_draw_gc, Shape::Lines(),
-    Shape::LinesCount());
+  Shape::InitDrawGC(w);
+  Shape::DrawAll(w);
 }
 
 /**

@@ -33,10 +33,8 @@ public:
   int run();
 
 private:
-  static GC m_draw_gc;         // GC used for final drawing
-  static GC m_input_gc;        // GC used for drawing current position
-  static int m_button_pressed; // input state
-  static int x1, y1, x2, y2;   // input coords
+  static int m_button_pressed;
+  static int x1, y1, x2, y2;
 
   Widget m_top_level;
   static Widget m_main_win;
@@ -96,7 +94,6 @@ private:
     XtPointer call_data);
   static void OnLineWidthChanged(Widget w, XtPointer client_data,
     XtPointer call_data);
-
   static void OnQdQuit(Widget w, XtPointer client_data,
     XtPointer call_data);
   static void OnQdCancel(Widget w, XtPointer client_data,
