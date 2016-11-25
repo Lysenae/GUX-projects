@@ -7,7 +7,6 @@
 
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
-#include <vector>
 #include <cstdlib>
 
 #include "colors.h"
@@ -33,7 +32,6 @@ public:
   static void SetDrawStyle(Widget w);
 
   static void Add(int x1, int y1, int x2, int y2);
-  static std::vector<ShapeProperties*> All();
 
   static void ClearAll();
 
@@ -52,7 +50,7 @@ private:
   static int m_shape;
   static int m_border;
   static int m_line_width;
-  static int m_shape_count;
+  static int m_shapes_count;
   static int m_max_shapes;
 
   static GC m_input_gc;
@@ -60,7 +58,7 @@ private:
   static Pixel m_fg;
   static Pixel m_bg;
 
-  static std::vector<ShapeProperties*> m_shapes;
+  static ShapeProperties **m_shapes;
 
   static int Width(int x1, int x2);
   static int Height(int y1, int y2);

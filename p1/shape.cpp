@@ -4,20 +4,20 @@
 
 #include "shape.h"
 
-bool Shape::m_fill      = false;
-int Shape::m_shape      = Shape::POINT;
-int Shape::m_border     = Shape::BORDER_FULL;
-int Shape::m_line_width = 1;
+bool Shape::m_fill        = false;
+int Shape::m_shape        = Shape::POINT;
+int Shape::m_border       = Shape::BORDER_FULL;
+int Shape::m_line_width   = 1;
 
-GC Shape::m_input_gc    = 0;
-GC Shape::m_draw_gc     = 0;
-Pixel Shape::m_fg       = 0;
-Pixel Shape::m_bg       = 0;
+GC Shape::m_input_gc      = 0;
+GC Shape::m_draw_gc       = 0;
+Pixel Shape::m_fg         = 0;
+Pixel Shape::m_bg         = 0;
 
-int m_shape_count       = 0;
-int m_max_shapes        = 0;
+int Shape::m_shapes_count = 0;
+int Shape::m_max_shapes   = 0;
 
-std::vector<ShapeProperties*> Shape::m_shapes;
+ShapeProperties **Shape::m_shapes = 0;
 
 void Shape::SetShape(int shape)
 {
@@ -176,7 +176,7 @@ void Shape::Draw(Widget w, int x1, int y1, int x2, int y2)
 ///
 void Shape::DrawAll(Widget w)
 {
-  for(unsigned int i=0; i<m_shapes.size(); ++i)
+  for(unsigned int i=0; i<m_shapes_count; ++i)
   {
     ShapeProperties *shape = m_shapes[i];
     XGCValues gcv;
@@ -276,7 +276,13 @@ void Shape::SetDrawStyle(Widget w)
 ///
 void Shape::Add(int x1, int y1, int x2, int y2)
 {
-  ShapeProperties *s = new ShapeProperties(
+  if(m_shapes_count + 1 > m_max_shapes)
+  {
+    m_max_shapes += Shape::ALLOC_STEP;
+    m_shapes = (ShapeProperties**)realloc(m_shapes, sizeof(ShapeProperties*) * m_max_shapes);
+  }
+
+  m_shapes[m_shapes_count] = new ShapeProperties(
     m_shape, m_border, m_line_width, m_fill,
     Colors::Foreground(), Colors::Background()
   );
@@ -288,7 +294,7 @@ void Shape::Add(int x1, int y1, int x2, int y2)
       XPoint *pt = (XPoint*) XtMalloc((Cardinal)sizeof(XPoint));
       pt->x = x1;
       pt->y = y1;
-      s->SetPoint(pt);
+      m_shapes[m_shapes_count]->SetPoint(pt);
     }
     else
     {
@@ -299,7 +305,7 @@ void Shape::Add(int x1, int y1, int x2, int y2)
       elps->height = 2 * m_line_width + 1;
       elps->angle1 = Shape::ANGLE1;
       elps->angle2 = Shape::ANGLE2;
-      s->SetEllipse(elps);
+      m_shapes[m_shapes_count]->SetEllipse(elps);
     }
   }
   else if(m_shape == Shape::LINE)
@@ -309,7 +315,7 @@ void Shape::Add(int x1, int y1, int x2, int y2)
     line->y1       = y1;
     line->x2       = x2;
     line->y2       = y2;
-    s->SetLine(line);
+    m_shapes[m_shapes_count]->SetLine(line);
   }
   else if(m_shape == Shape::RECT)
   {
@@ -318,7 +324,7 @@ void Shape::Add(int x1, int y1, int x2, int y2)
     rect->y          = Min(y1, y2);
     rect->width      = Width(x1, x2);
     rect->height     = Height(y1, y2);
-    s->SetRect(rect);
+    m_shapes[m_shapes_count]->SetRect(rect);
   }
   else if(m_shape == Shape::ELLIPSE)
   {
@@ -329,23 +335,21 @@ void Shape::Add(int x1, int y1, int x2, int y2)
     elps->height = Height(y1, y2);
     elps->angle1 = Shape::ANGLE1;
     elps->angle2 = Shape::ANGLE2;
-    s->SetEllipse(elps);
+    m_shapes[m_shapes_count]->SetEllipse(elps);
   }
-  m_shapes.push_back(s);
-}
-
-std::vector<ShapeProperties*> Shape::All()
-{
-  return m_shapes;
+  ++m_shapes_count;
 }
 
 void Shape::ClearAll()
 {
-  for(unsigned int i=0; i<m_shapes.size(); i++)
+  for(unsigned int i=0; i<m_shapes_count; i++)
   {
     delete m_shapes[i];
   }
-  m_shapes.clear();
+
+  m_shapes       = 0;
+  m_max_shapes   = 0;
+  m_shapes_count = 0;
 }
 
 ///
