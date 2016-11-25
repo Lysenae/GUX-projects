@@ -392,6 +392,7 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
         m_button_pressed = 0;
         Shape::SetDrawGC(w);
         Shape::Draw(w, x1, y1, d->event->xbutton.x, d->event->xbutton.y);
+        XClearArea(XtDisplay(w), XtWindow(w), 0, 0, 0, 0, True);
       }
       break;
     }
