@@ -3,10 +3,26 @@
 
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>
+#include <vector>
+#include <iostream>
 
 #include "colors.h"
 
 #define ALLOC_STEP 10 // memory allocation stepping
+
+class ShapeProperties
+{
+public:
+  ShapeProperties(int type, int border, int width, bool filled, Pixel fg,
+Pixel bg);
+  int m_type;
+  int m_border;
+  int m_width;
+  bool m_filled;
+  Pixel m_fg;
+  Pixel m_bg;
+  XSegment *m_line;
+};
 
 class Shape
 {
@@ -23,9 +39,9 @@ public:
   static void Draw(Widget w, int x1, int y1, int x2, int y2);
   static void DrawAll(Widget w);
 
-  static void AddLine(int x1, int y1, int x2, int y2);
+  static void Add(int x1, int y1, int x2, int y2);
   static int LinesCount();
-  static XSegment* Lines();
+  static std::vector<ShapeProperties> All();
 
   static void ClearAll();
   static void FreeAll();
@@ -48,7 +64,7 @@ private:
   static Pixel m_fg;
   static Pixel m_bg;
 
-  static XSegment *m_lines;
+  static std::vector<ShapeProperties> m_shapes;
   static int m_lines_cnt;
   static int m_max_lines;
 };

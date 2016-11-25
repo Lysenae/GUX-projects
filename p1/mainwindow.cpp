@@ -388,10 +388,12 @@ void MainWindow::DrawLineCB(Widget w, XtPointer client_data, XtPointer call_data
     {
       if(d->event->xbutton.button == Button1)
       {
-        Shape::AddLine(x1, y1, d->event->xbutton.x, d->event->xbutton.y);
+        x2 = d->event->xbutton.x;
+        y2 = d->event->xbutton.y;
+        Shape::Add(x1, y1, x2, y2);
         m_button_pressed = 0;
         Shape::SetDrawGC(w);
-        Shape::Draw(w, x1, y1, d->event->xbutton.x, d->event->xbutton.y);
+        Shape::Draw(w, x1, y1, x2, y2);
         XClearArea(XtDisplay(w), XtWindow(w), 0, 0, 0, 0, True);
       }
       break;
