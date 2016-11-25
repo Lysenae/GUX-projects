@@ -12,8 +12,6 @@
 #include <cstring>
 #include <cstdlib>
 
-#define COLORS 6
-
 class Colors
 {
 public:
@@ -26,13 +24,15 @@ public:
   static char **Names();
   static char *Name(unsigned int i);
 
+  static const int COLORS = 6;
+
 private:
-  static char *m_color_names[COLORS];
+  static char *m_color_names[Colors::COLORS];
   static Pixel *m_colors;
   static Pixel m_background;
   static Pixel m_foreground;
 
-  static char **InitNames();
+  static void InitNames();
 };
 
 #endif // COLORS_H

@@ -14,6 +14,9 @@ GC Shape::m_draw_gc     = 0;
 Pixel Shape::m_fg       = 0;
 Pixel Shape::m_bg       = 0;
 
+int m_shape_count       = 0;
+int m_max_shapes        = 0;
+
 std::vector<ShapeProperties*> Shape::m_shapes;
 
 void Shape::SetShape(int shape)

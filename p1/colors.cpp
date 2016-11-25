@@ -5,7 +5,7 @@
 #include "colors.h"
 
 // Init static variables
-char *Colors::m_color_names[COLORS];
+char *Colors::m_color_names[Colors::COLORS];
 Pixel *Colors::m_colors      = 0;
 Pixel Colors::m_background;
 Pixel Colors::m_foreground;
@@ -19,7 +19,7 @@ bool Colors::Init(Widget shell)
   InitNames();
   XColor col_screen, col_exact;
   XWindowAttributes win_attrs;
-  m_colors = (Pixel*)XtMalloc((Cardinal)(sizeof(Pixel) * COLORS));
+  m_colors = (Pixel*)XtMalloc((Cardinal)(sizeof(Pixel) * Colors::COLORS));
 
   Display  *display = XtDisplay(shell);
   Screen   *screen  = XtScreen(shell);
@@ -27,7 +27,7 @@ bool Colors::Init(Widget shell)
 
   XGetWindowAttributes(display, RootWindowOfScreen(screen), &win_attrs);
 
-  for(unsigned int i=0; i<COLORS; i++)
+  for(unsigned int i=0; i<Colors::COLORS; i++)
   {
     if(XAllocNamedColor(display, colmap, m_color_names[i],
     &col_screen, &col_exact) == 0)
@@ -67,7 +67,7 @@ Pixel Colors::Foreground()
 ///
 void Colors::SetBackground(unsigned int i)
 {
-  if(i < COLORS)
+  if(i < Colors::COLORS)
     m_background = m_colors[i];
 }
 
@@ -77,17 +77,8 @@ void Colors::SetBackground(unsigned int i)
 ///
 void Colors::SetForeground(unsigned int i)
 {
-  if(i < COLORS)
+  if(i < Colors::COLORS)
     m_foreground = m_colors[i];
-}
-
-///
-/// \brief Get number of initilized colors.
-/// \return Number of initilized colors
-///
-int Colors::Count()
-{
-  return COLORS;
 }
 
 ///
@@ -112,9 +103,9 @@ char *Colors::Name(unsigned int i)
 /// \brief Initilize vector of color names.
 /// \return List of color names
 ///
-char **Colors::InitNames()
+void Colors::InitNames()
 {
-  for(int i=0; i<COLORS; ++i)
+  for(int i=0; i<Colors::COLORS; ++i)
   {
     m_color_names[i] = (char*) malloc(10);
   }

@@ -45,12 +45,15 @@ public:
   static const int BORDER_DOTTED = 1;
   static const int ANGLE1        = 0;
   static const int ANGLE2        = 23040; // 360*64
+  static const int ALLOC_STEP    = 10;
 
 private:
   static bool m_fill;
   static int m_shape;
   static int m_border;
   static int m_line_width;
+  static int m_shape_count;
+  static int m_max_shapes;
 
   static GC m_input_gc;
   static GC m_draw_gc;

@@ -272,8 +272,8 @@ void MainWindow::CreateTools()
     OnLineWidthChanged, NULL);
 
   char **col_names = Colors::Names();
-  XmString colors[Colors::Count()];
-  for(int i=0; i<Colors::Count(); ++i)
+  XmString colors[Colors::COLORS];
+  for(int i=0; i<Colors::COLORS; ++i)
   {
     colors[i] = XmStringCreateLocalized(col_names[i]);
   }
@@ -294,7 +294,7 @@ void MainWindow::CreateTools()
     xmComboBoxWidgetClass,
     m_tools_style,
     XmNcomboBoxType, XmDROP_DOWN_LIST,
-    XmNitemCount, Colors::Count(),
+    XmNitemCount, Colors::COLORS,
     XmNitems, colors,
     XmNselectedPosition, 1,
     NULL
@@ -316,7 +316,7 @@ void MainWindow::CreateTools()
     xmComboBoxWidgetClass,
     m_tools_style,
     XmNcomboBoxType, XmDROP_DOWN_LIST,
-    XmNitemCount, Colors::Count(),
+    XmNitemCount, Colors::COLORS,
     XmNitems, colors,
     NULL
   );
