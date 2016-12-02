@@ -15,8 +15,7 @@ Widget MainWindow::m_shape_point   = 0;
 Widget MainWindow::m_shape_line    = 0;
 Widget MainWindow::m_shape_rect    = 0;
 Widget MainWindow::m_shape_ellipse = 0;
-Widget MainWindow::m_border_full   = 0;
-Widget MainWindow::m_border_dotted = 0;
+Widget MainWindow::m_border_btn    = 0;
 Widget MainWindow::m_fill_btn      = 0;
 Widget MainWindow::m_line_width_sc = 0;
 Widget MainWindow::m_fg_cb         = 0;
@@ -42,7 +41,7 @@ MainWindow::MainWindow(int argc, char **argv)
     XmNx, 300,
     XmNy, 150,
     XmNminHeight, 300,
-    XmNminWidth, 400,
+    XmNminWidth, 500,
     NULL
   );
 
@@ -239,22 +238,21 @@ void MainWindow::CreateTools()
   );
   XtAddCallback(m_shape_ellipse, XmNvalueChangedCallback, OnShapeToggled, NULL);
 
-  m_border_full = XtVaCreateManagedWidget(
-    "Full line",
+  m_border_btn = XtVaCreateManagedWidget(
+    "Doted line",
     xmToggleButtonWidgetClass,
     m_tools_border,
     NULL
   );
-  XtAddCallback(m_border_full, XmNvalueChangedCallback, OnBorderToggled, NULL);
-  XmToggleButtonSetState(m_border_full, True, False);
+  XtAddCallback(m_border_btn, XmNvalueChangedCallback, OnBorderToggled, NULL);
 
-  m_border_dotted = XtVaCreateManagedWidget(
-    "Dotted line",
+    m_fill_btn = XtVaCreateManagedWidget(
+    "Fill rectangle/ellipse",
     xmToggleButtonWidgetClass,
     m_tools_border,
     NULL
   );
-  XtAddCallback(m_border_dotted, XmNvalueChangedCallback, OnBorderToggled, NULL);
+  XtAddCallback(m_fill_btn, XmNvalueChangedCallback, OnFillToggled, NULL);
 
   Arg args[7];
   label = XmStringCreateSimple((char*)"Line Width");
@@ -323,14 +321,6 @@ void MainWindow::CreateTools()
     NULL
   );
   XtAddCallback(m_bg_cb, XmNselectionCallback, OnColorChanged, NULL);
-
-  m_fill_btn = XtVaCreateManagedWidget(
-    "Fill rectangle/ellipse",
-    xmToggleButtonWidgetClass,
-    m_tools_style,
-    NULL
-  );
-  XtAddCallback(m_fill_btn, XmNvalueChangedCallback, OnFillToggled, NULL);
 }
 
 ///
@@ -533,21 +523,13 @@ XtPointer call_data)
 void MainWindow::OnBorderToggled(Widget w, XtPointer client_data,
 XtPointer call_data)
 {
-  if(w == m_border_full)
+  if(XmToggleButtonGetState(w) == True)
   {
-    XmToggleButtonSetState(m_border_full, True, False);
-    XmToggleButtonSetState(m_border_dotted, False, False);
-    Shape::SetBorder(Shape::BORDER_FULL);
-  }
-  else if(w == m_border_dotted)
-  {
-    XmToggleButtonSetState(m_border_full, False, False);
-    XmToggleButtonSetState(m_border_dotted, True, False);
     Shape::SetBorder(Shape::BORDER_DOTTED);
   }
   else
   {
-    fprintf(stderr, "Invalid border type ID\n");
+    Shape::SetBorder(Shape::BORDER_FULL);
   }
 }
 

@@ -63,8 +63,7 @@ private:
   static Widget m_shape_line;
   static Widget m_shape_rect;
   static Widget m_shape_ellipse;
-  static Widget m_border_full;
-  static Widget m_border_dotted;
+  static Widget m_border_btn;
   static Widget m_fill_btn;
   static Widget m_line_width_sc;
   static Widget m_fg_cb;
