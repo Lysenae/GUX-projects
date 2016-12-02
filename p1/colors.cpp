@@ -111,8 +111,8 @@ void Colors::InitNames()
   }
   strcpy(m_color_names[0], "white");
   strcpy(m_color_names[1], "black");
-  strcpy(m_color_names[2], "gold");
-  strcpy(m_color_names[3], "olive");
-  strcpy(m_color_names[4], "maroon");
-  strcpy(m_color_names[5], "indigo");
+  strcpy(m_color_names[2], "yellow");
+  strcpy(m_color_names[3], "green");
+  strcpy(m_color_names[4], "red");
+  strcpy(m_color_names[5], "blue");
 }

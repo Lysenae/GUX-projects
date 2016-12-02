@@ -41,6 +41,8 @@ MainWindow::MainWindow(int argc, char **argv)
     NULL,
     XmNx, 300,
     XmNy, 150,
+    XmNminHeight, 300,
+    XmNminWidth, 400,
     NULL
   );
 
