@@ -41,7 +41,7 @@ MainWindow::MainWindow(int argc, char **argv)
     XmNx, 300,
     XmNy, 150,
     XmNminHeight, 300,
-    XmNminWidth, 500,
+    XmNminWidth, 400,
     NULL
   );
 
@@ -247,7 +247,7 @@ void MainWindow::CreateTools()
   XtAddCallback(m_border_btn, XmNvalueChangedCallback, OnBorderToggled, NULL);
 
     m_fill_btn = XtVaCreateManagedWidget(
-    "Fill rectangle/ellipse",
+    "Fill",
     xmToggleButtonWidgetClass,
     m_tools_border,
     NULL
