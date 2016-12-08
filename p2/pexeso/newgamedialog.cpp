@@ -42,7 +42,8 @@ NewGameDialog::NewGameDialog()
     m_main_lt->addLayout(m_btns_lt);
 
     QRect scr = QApplication::desktop()->screenGeometry();
-    setGeometry(scr.width()/2 - nWidth/2, scr.height()/2 - nHeight/2, nWidth, nHeight);
+    setGeometry(scr.width()/2 - nWidth/2, scr.height()/2 - nHeight/2,
+        nWidth, nHeight);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setModal(true);
     setLayout(m_main_lt);
