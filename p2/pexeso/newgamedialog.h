@@ -9,6 +9,9 @@
 #include <QPushButton>
 #include <QComboBox>
 #include <QSpacerItem>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QRect>
 
 #include <QDebug>
 
@@ -39,6 +42,9 @@ private:
     QComboBox *m_players_cb;
     QComboBox *m_theme_cb;
     QComboBox *m_size_cb;
+
+    const int nWidth  = 250;
+    const int nHeight = 165;
 
     void populateComboBoxes();
 
