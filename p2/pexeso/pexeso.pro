@@ -13,9 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        pexeso.cpp
+        pexeso.cpp \
+    newgamedialog.cpp
 
-HEADERS  += pexeso.h
+HEADERS  += pexeso.h \
+    newgamedialog.h
 
 RESOURCES += \
     resources.qrc

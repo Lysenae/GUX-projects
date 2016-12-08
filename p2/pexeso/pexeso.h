@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "newgamedialog.h"
+
 class Pexeso : public QMainWindow
 {
     Q_OBJECT
@@ -10,6 +12,12 @@ class Pexeso : public QMainWindow
 public:
     Pexeso(QWidget *parent = 0);
     ~Pexeso();
+
+private:
+    NewGameDialog *m_ngd;
+
+private slots:
+    void getSettings(int players, int theme, int size);
 };
 
 #endif // PEXESO_H
