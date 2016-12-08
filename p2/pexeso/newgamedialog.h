@@ -12,6 +12,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QRect>
+#include <QPoint>
 
 #include <QDebug>
 
@@ -52,7 +53,7 @@ private slots:
     void onCreateClicked();
 
 signals:
-    void passSettings(int, int, int);
+    void passSettings(int, int, QPoint);
 };
 
 #endif // NEWGAMEDIALOG_H

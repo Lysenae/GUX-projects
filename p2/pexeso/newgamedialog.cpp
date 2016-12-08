@@ -66,10 +66,10 @@ void NewGameDialog::populateComboBoxes()
     m_theme_cb->addItem("Fruit", QVariant(3));
     m_theme_cb->setCurrentIndex(0);
 
-    m_size_cb->addItem("4x4", QVariant(16));
-    m_size_cb->addItem("5x4", QVariant(20));
-    m_size_cb->addItem("6x4", QVariant(24));
-    m_size_cb->addItem("6x6", QVariant(36));
+    m_size_cb->addItem("4x4", QVariant(QPoint(4, 4)));
+    m_size_cb->addItem("4x5", QVariant(QPoint(4, 5)));
+    m_size_cb->addItem("4x6", QVariant(QPoint(4, 6)));
+    m_size_cb->addItem("6x6", QVariant(QPoint(6, 6)));
     m_theme_cb->setCurrentIndex(0);
 }
 
@@ -77,7 +77,7 @@ void NewGameDialog::onCreateClicked()
 {
     int players = m_players_cb->currentData().toInt();
     int theme   = m_theme_cb->currentData().toInt();
-    int size    = m_size_cb->currentData().toInt();
+    QPoint size = m_size_cb->currentData().toPoint();
     emit passSettings(players, theme, size);
     accept();
 }

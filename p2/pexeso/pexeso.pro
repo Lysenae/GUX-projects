@@ -14,10 +14,18 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         pexeso.cpp \
-    newgamedialog.cpp
+    newgamedialog.cpp \
+    tile.cpp \
+    players.cpp \
+    dimension.cpp \
+    theme.cpp
 
 HEADERS  += pexeso.h \
-    newgamedialog.h
+    newgamedialog.h \
+    tile.h \
+    players.h \
+    dimension.h \
+    theme.h
 
 RESOURCES += \
     resources.qrc
