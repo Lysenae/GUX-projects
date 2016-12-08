@@ -2,6 +2,7 @@
 #define THEME_H
 
 #include <QPixmap>
+#include <QString>
 
 enum ThemeType
 {
@@ -18,6 +19,7 @@ public:
     void set(int theme);
     ThemeType get();
     QPixmap loadImage(int i);
+    QString toString();
 
 private:
     ThemeType m_theme;

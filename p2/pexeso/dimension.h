@@ -1,6 +1,7 @@
 #ifndef DIMENSION_H
 #define DIMENSION_H
 
+#include <QString>
 
 class Dimension
 {
@@ -10,6 +11,7 @@ public:
     int rows();
     int cols();
     void set(int rows, int cols);
+    QString toString();
 
 private:
     int m_cols;

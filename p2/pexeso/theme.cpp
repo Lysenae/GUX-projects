@@ -41,8 +41,24 @@ QPixmap Theme::loadImage(int i)
         else if(m_theme == THEME_FRUIT)
             s += "f";
         s += QString::number(i);
+        s += ".jpg";
         return QPixmap(s).scaled(50, 50);
     }
 
-    return QPixmap();
+    return QPixmap(":images/x.jpg").scaled(50, 50);
+}
+
+QString Theme::toString()
+{
+    switch(m_theme)
+    {
+        case THEME_ANIMALS:
+            return "Animals";
+        case THEME_NATURE:
+            return "Nature";
+        case THEME_FRUIT:
+            return "Fruit";
+        default:
+            return "None";
+    }
 }

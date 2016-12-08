@@ -2,8 +2,7 @@
 
 Players::Players()
 {
-    m_count   = 1;
-    m_current = 1;
+    setCount(1);
 }
 
 void Players::setCount(int count)
@@ -13,6 +12,10 @@ void Players::setCount(int count)
     else
         m_count = count;
     m_current = 1;
+
+    m_scores.clear();
+    for(int i=0; i<m_count; ++i)
+        m_scores.append(0);
 }
 
 void Players::next()
@@ -28,4 +31,22 @@ int Players::current()
 int Players::count()
 {
     return m_count;
+}
+
+int Players::getScore(int i)
+{
+    i = i-1;
+    if(i >=0 && i<m_count)
+        return m_scores[i];
+    return -1;
+}
+
+void Players::incScore(int i)
+{
+    i = i-1;
+    if(i >=0 && i<m_count)
+    {
+        int tmp = m_scores[i];
+        m_scores.replace(i, tmp);
+    }
 }
