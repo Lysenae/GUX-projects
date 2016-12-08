@@ -62,9 +62,9 @@ void NewGameDialog::populateComboBoxes()
     m_players_cb->addItem("4", QVariant(4));
     m_players_cb->setCurrentIndex(0);
 
-    m_theme_cb->addItem("Animals", QVariant(1));
-    m_theme_cb->addItem("Nature", QVariant(2));
-    m_theme_cb->addItem("Fruit", QVariant(3));
+    m_theme_cb->addItem(tr("Animals"), QVariant(1));
+    m_theme_cb->addItem(tr("Nature"), QVariant(2));
+    m_theme_cb->addItem(tr("Fruit"), QVariant(3));
     m_theme_cb->setCurrentIndex(0);
 
     m_size_cb->addItem("4x4", QVariant(QPoint(4, 4)));

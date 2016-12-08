@@ -19,7 +19,7 @@ SOURCES += main.cpp\
     players.cpp \
     dimension.cpp \
     theme.cpp \
-    random.cpp
+    board.cpp
 
 HEADERS  += pexeso.h \
     newgamedialog.h \
@@ -27,7 +27,7 @@ HEADERS  += pexeso.h \
     players.h \
     dimension.h \
     theme.h \
-    random.h
+    board.h
 
 RESOURCES += \
     resources.qrc

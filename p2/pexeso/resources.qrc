@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/images">
+    <qresource prefix="/">
         <file>a0.jpg</file>
         <file>a1.jpg</file>
         <file>a2.jpg</file>
@@ -57,8 +57,6 @@
         <file>n16.jpg</file>
         <file>n17.jpg</file>
         <file>n18.jpg</file>
-    </qresource>
-    <qresource prefix="/">
         <file>x.jpg</file>
     </qresource>
 </RCC>

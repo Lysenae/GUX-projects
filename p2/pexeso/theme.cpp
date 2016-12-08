@@ -29,11 +29,11 @@ ThemeType Theme::get()
     return m_theme;
 }
 
-QPixmap Theme::loadImage(int i)
+QString Theme::imageName(int i)
 {
     if(i >= 0 && i <= 18 && m_theme != THEME_NONE)
     {
-        QString s = ":images/";
+        QString s = ":/";
         if(m_theme == THEME_ANIMALS)
             s += "a";
         else if(m_theme == THEME_NATURE)
@@ -42,10 +42,9 @@ QPixmap Theme::loadImage(int i)
             s += "f";
         s += QString::number(i);
         s += ".jpg";
-        return QPixmap(s).scaled(50, 50);
+        return s;
     }
-
-    return QPixmap(":images/x.jpg").scaled(50, 50);
+    return ":/x.jpg";
 }
 
 QString Theme::toString()

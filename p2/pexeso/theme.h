@@ -4,6 +4,8 @@
 #include <QPixmap>
 #include <QString>
 
+#include <QDebug>
+
 enum ThemeType
 {
     THEME_NONE = 0,
@@ -18,7 +20,7 @@ public:
     Theme();
     void set(int theme);
     ThemeType get();
-    QPixmap loadImage(int i);
+    QString imageName(int i);
     QString toString();
 
 private:

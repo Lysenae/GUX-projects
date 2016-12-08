@@ -8,7 +8,7 @@
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 #include <QHBoxLayout>
-#include <QPoint>
+#include <QMouseEvent>
 
 #include "theme.h"
 
@@ -17,7 +17,8 @@ class Tile : public QWidget
     Q_OBJECT
 
 public:
-    explicit Tile(int id, Theme *theme, QPoint position, QWidget *parent = 0);
+    explicit Tile(int id, Theme *theme, QWidget *parent = 0);
+    void mousePressEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
 
 private:
     const int BACK  = 0;
@@ -27,7 +28,6 @@ private:
     bool    m_flipped;
     bool    m_collected;
     Theme  *m_theme;
-    QPoint  m_position;
 
     QPixmap             *m_pm;
     QGraphicsScene      *m_scene;

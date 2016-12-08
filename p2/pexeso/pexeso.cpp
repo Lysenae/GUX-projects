@@ -56,9 +56,8 @@ void Pexeso::createMenu()
 
 void Pexeso::createLayout()
 {
-    m_main_lt = new QHBoxLayout();
-    m_info_lt = new QVBoxLayout();
-    m_board   = new QScrollArea();
+    // Info panel
+    m_info_lt  = new QVBoxLayout();
 
     m_players_ld = new QLabel(QString(tr("Players:")), m_window);
     m_players_lv = new QLabel(QString::number(m_players->count()), m_window);
@@ -123,20 +122,26 @@ void Pexeso::createLayout()
     m_info_w->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     m_info_w->setLayout(m_info_lt);
 
-    m_board->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    m_board->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    m_board->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    // Board
+    m_board_w = new Board(m_dim, m_theme, m_window);
+    QPalette Pal(palette());
 
-    // Hlavny layout
+    Pal.setColor(QPalette::Background, Qt::black);
+    m_board_w->setAutoFillBackground(true);
+    m_board_w->setPalette(Pal);
+    m_board_w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    // Main layout
+    m_main_lt  = new QHBoxLayout();
     m_main_lt->addWidget(m_info_w);
-    m_main_lt->addWidget(m_board);
+    m_main_lt->addWidget(m_board_w);
 
     m_window->setLayout(m_main_lt);
 
     setCentralWidget(m_window);
 }
 
-void Pexeso::clearBoard()
+void Pexeso::clearLayout()
 {
     if(m_window != nullptr)
     {
@@ -151,6 +156,11 @@ void Pexeso::clearBoard()
 void Pexeso::createNewGame()
 {
     createLayout();
+    m_board_w->createBoard();
+    setMinimumSize(m_info_w->width()+m_board_w->minimumWidth()+10,
+        m_board_w->minimumHeight()+50);
+    resize(m_info_w->width()+m_board_w->minimumWidth()+10,
+        m_board_w->minimumHeight()+50);
 }
 
 void Pexeso::getSettings(int players, int theme, QPoint size)
@@ -164,7 +174,7 @@ void Pexeso::onNewGame()
 {
     if(m_ngd->exec() == QDialog::Accepted)
     {
-        clearBoard();
+        clearLayout();
         createNewGame();
     }
 }
