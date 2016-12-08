@@ -8,7 +8,6 @@ Pexeso::Pexeso(QWidget *parent) : QMainWindow(parent)
     m_players = new Players();
     m_theme   = new Theme();
 
-    m_ngd->show();
     QObject::connect(m_ngd, SIGNAL(passSettings(int, int, QPoint)),
         this, SLOT(getSettings(int, int, QPoint)));
 }
@@ -22,18 +21,4 @@ void Pexeso::getSettings(int players, int theme, QPoint size)
     m_players->setCount(players);
     m_theme->set(theme);
     m_dim->set(size.x(), size.y());
-
-    qDebug() << "Size: [" << m_dim->rows() << "," << m_dim->cols() << "]=" << m_dim->size();
-    qDebug() << "Theme:" << m_theme->get();
-    qDebug() << "Players:" << m_players->count() << ", current:" << m_players->current();
-
-    QVector<int> v;
-    v.push_back(1);
-    v.push_back(2);
-    v.push_back(3);
-    v.push_back(4);
-    v.push_back(5);
-    qDebug() << v;
-    Random::shuffle(&v);
-    qDebug() << v;
 }
