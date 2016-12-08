@@ -2,12 +2,17 @@
 #define PEXESO_H
 
 #include <QMainWindow>
+#include <QVector>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QPixmap>
 
 #include "newgamedialog.h"
 #include "tile.h"
 #include "players.h"
 #include "dimension.h"
 #include "theme.h"
+#include "random.h"
 
 
 class Pexeso : public QMainWindow

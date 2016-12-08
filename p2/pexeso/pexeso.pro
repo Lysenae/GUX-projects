@@ -18,14 +18,16 @@ SOURCES += main.cpp\
     tile.cpp \
     players.cpp \
     dimension.cpp \
-    theme.cpp
+    theme.cpp \
+    random.cpp
 
 HEADERS  += pexeso.h \
     newgamedialog.h \
     tile.h \
     players.h \
     dimension.h \
-    theme.h
+    theme.h \
+    random.h
 
 RESOURCES += \
     resources.qrc
