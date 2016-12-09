@@ -15,6 +15,9 @@
 #include <QMenuBar>
 #include <QVector>
 #include <QMouseEvent>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QFile>
 
 #include "newgamedialog.h"
 #include "tile.h"
@@ -83,8 +86,8 @@ private:
 private slots:
     void getSettings(int players, int theme, QPoint size);
     void onNewGame();
-    void onSaveGame();
-    void onLoadGame();
+    bool onSaveGame();
+    bool onLoadGame();
 };
 
 #endif // PEXESO_H

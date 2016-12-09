@@ -179,12 +179,54 @@ void Pexeso::onNewGame()
     }
 }
 
-void Pexeso::onSaveGame()
+bool Pexeso::onSaveGame()
 {
-    qDebug() << "Save";
+    QString fn = QFileDialog::getSaveFileName(this, tr("Save ..."),
+            QString(), tr("Pexeso Save File (*.pxs);;All Files (*.*)"));
+
+    if(!fn.isEmpty())
+    {
+        QFile file(fn);
+        if(file.open(QIODevice::WriteOnly))
+        {
+            // TODO
+            file.close();
+            return true;
+        }
+        else
+        {
+            QMessageBox err_box;
+            err_box.critical(0, "Error","Could not open file to write!");
+            err_box.setFixedSize(500, 200);
+            return false;
+        }
+    }
+
+    return false;
 }
 
-void Pexeso::onLoadGame()
+bool Pexeso::onLoadGame()
 {
-    qDebug() << "Load";
+    QString fn = QFileDialog::getOpenFileName(this, tr("Load ..."),
+            QString(), tr("Pexeso Save File (*.pxs);;All Files (*.*)"));
+
+    if(!fn.isEmpty())
+    {
+        QFile file(fn);
+        if(file.open(QIODevice::ReadOnly))
+        {
+            // TODO
+            file.close();
+            return true;
+        }
+        else
+        {
+            QMessageBox err_box;
+            err_box.critical(0, "Error","Could not open file to read!");
+            err_box.setFixedSize(500, 200);
+            return false;
+        }
+    }
+
+    return false;
 }
