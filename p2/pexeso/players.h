@@ -13,6 +13,8 @@ public:
     int count();
     int getScore(int i);
     void incScore(int i);
+    void setScore(int i, int score);
+    QVector<int> getWinners();
 
 private:
     int m_count;

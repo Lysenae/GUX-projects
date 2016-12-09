@@ -46,7 +46,36 @@ void Players::incScore(int i)
     i = i-1;
     if(i >=0 && i<m_count)
     {
-        int tmp = m_scores[i];
+        int tmp = m_scores[i]+1;
         m_scores.replace(i, tmp);
     }
+}
+
+void Players::setScore(int i, int score)
+{
+    i = i-1;
+    if(i >=0 && i<m_count)
+    {
+        m_scores.replace(i, score);
+    }
+}
+
+QVector<int> Players::getWinners()
+{
+    QVector<int> w;
+    int max = 0;
+
+    for(int i=0; i<m_scores.size(); ++i)
+    {
+        if(m_scores[i] > max)
+            max = m_scores[i];
+    }
+
+    for(int i=0; i<m_scores.size(); ++i)
+    {
+        if(m_scores[i] == max)
+            w.append(i+1);
+    }
+
+    return w;
 }

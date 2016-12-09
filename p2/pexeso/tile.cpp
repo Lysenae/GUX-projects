@@ -1,14 +1,15 @@
 #include "tile.h"
 
-Tile::Tile(int id, Theme *theme, QWidget *parent)
+Tile::Tile(int id, int order, Theme *theme, QWidget *parent)
  : QWidget(parent)
 {
     m_id        = id;
-    m_flipped   = true;
+    m_flipped   = false;
     m_collected = false;
     m_theme     = theme;
+    m_order     = order;
 
-    QPixmap p = QPixmap(m_theme->imageName(id)).scaled(100, 100);
+    QPixmap p = QPixmap(m_theme->imageName(BACK)).scaled(100, 100);
     m_pm    = new QPixmap(p);
     m_scene = new QGraphicsScene();
     m_gi    = new QGraphicsPixmapItem(*m_pm);
@@ -29,23 +30,42 @@ Tile::Tile(int id, Theme *theme, QWidget *parent)
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
-void Tile::mousePressEvent(QMouseEvent *e)
+void Tile::mousePressEvent(QMouseEvent *)
 {
-    if(!m_flipped && !m_collected)
-    {
-        m_flipped = true;
-    }
-    else if(m_flipped && !m_collected)
-    {
-        m_collected = true;
-    }
-    else
-    {
-        m_flipped   = false;
-        m_collected = false;
-    }
+    emit clicked();
+}
 
+bool Tile::isFlipped()
+{
+    return m_flipped;
+}
+
+bool Tile::isCollected()
+{
+    return m_collected;
+}
+
+void Tile::toggleFlipped()
+{
+    m_flipped = !m_flipped;
     changePixmap();
+}
+
+void Tile::setCollected()
+{
+    m_collected = true;
+    m_flipped   = false;
+    changePixmap();
+}
+
+int Tile::id()
+{
+    return m_id;
+}
+
+int Tile::order()
+{
+    return m_order;
 }
 
 void Tile::changePixmap()

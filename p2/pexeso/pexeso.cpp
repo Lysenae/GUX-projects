@@ -35,6 +35,7 @@ void Pexeso::createMenu()
     m_save_action = new QAction(tr("&Save ..."), this);
     m_save_action->setShortcuts(QKeySequence::Save);
     m_save_action->setStatusTip(tr("Save game"));
+    m_save_action->setEnabled(false);
     QObject::connect(m_save_action, SIGNAL(triggered()), this, SLOT(onSaveGame()));
 
     m_load_action = new QAction(tr("&Load ..."), this);
@@ -131,6 +132,9 @@ void Pexeso::createLayout()
     m_board_w->setPalette(Pal);
     m_board_w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+    QObject::connect(m_board_w, SIGNAL(endTurn(bool)), this, SLOT(onEndTurn(bool)));
+    QObject::connect(m_board_w, SIGNAL(gameOver()), this, SLOT(onGameOver()));
+
     // Main layout
     m_main_lt  = new QHBoxLayout();
     m_main_lt->addWidget(m_info_w);
@@ -161,6 +165,51 @@ void Pexeso::createNewGame()
         m_board_w->minimumHeight()+50);
     resize(m_info_w->width()+m_board_w->minimumWidth()+10,
         m_board_w->minimumHeight()+50);
+    m_save_action->setEnabled(true);
+}
+
+void Pexeso::save(QFile *file)
+{
+    QTextStream stream(file);
+    QStringList l;
+
+    QVector<QString> board = m_board_w->toStrings();
+
+    l << "players";
+    l << QString::number(m_players->count());
+    l << QString::number(m_players->current());
+    stream << l.join(',') << "\n";
+    l.clear();
+
+    for(int i=1; i<=m_players->count(); ++i)
+    {
+        l << "score";
+        l << QString::number(i);
+        l << QString::number(m_players->getScore(i));
+        stream << l.join(';') << "\n";
+        l.clear();
+    }
+
+    l << "size";
+    l << QString::number(m_dim->rows());
+    l << QString::number(m_dim->cols());
+    stream << l.join(';') << "\n";
+    l.clear();
+
+    l << "theme";
+    l << QString::number((int)m_theme->get());
+    stream << l.join(';') << "\n";
+    l.clear();
+
+    for(int i=0; i<board.size(); ++i)
+    {
+        stream << board[i] << "\n";
+    }
+}
+
+bool Pexeso::load(QFile *)
+{
+
 }
 
 void Pexeso::getSettings(int players, int theme, QPoint size)
@@ -182,14 +231,13 @@ void Pexeso::onNewGame()
 bool Pexeso::onSaveGame()
 {
     QString fn = QFileDialog::getSaveFileName(this, tr("Save ..."),
-            QString(), tr("Pexeso Save File (*.pxs);;All Files (*.*)"));
-
+        QString(), tr("Pexeso Save File (*.pxs);;All Files (*.*)"));
     if(!fn.isEmpty())
     {
         QFile file(fn);
         if(file.open(QIODevice::WriteOnly))
         {
-            // TODO
+            save(&file);
             file.close();
             return true;
         }
@@ -201,7 +249,6 @@ bool Pexeso::onSaveGame()
             return false;
         }
     }
-
     return false;
 }
 
@@ -229,4 +276,43 @@ bool Pexeso::onLoadGame()
     }
 
     return false;
+}
+
+void Pexeso::onEndTurn(bool inc_score)
+{
+    if(inc_score)
+    {
+        m_players->incScore(m_players->current());
+    }
+    m_players->next();
+
+    for(int i=0; i<m_scores.size(); ++i)
+    {
+        QString temp = QString("Player " + QString::number(i+1) + ": " +
+            QString::number(m_players->getScore(i+1)));
+        m_scores[i]->setText(temp);
+        m_cplayer_lv->setText(QString::number(m_players->current()));
+        m_info_w->repaint();
+    }
+}
+
+void Pexeso::onGameOver()
+{
+    QVector<int> w = m_players->getWinners();
+    QString s = "Player";
+    s += w.size() > 1 ? "s " : " ";
+
+    for(int i=0; i<w.size(); ++i)
+    {
+        s += QString::number(w[i]);
+        if(i<w.size()-1)
+            s += ", ";
+    }
+    s += " won!";
+
+    QMessageBox msg_box;
+    msg_box.information(0, "Game Over", s);
+    msg_box.setFixedSize(500, 200);
+    clearLayout();
+    m_save_action->setEnabled(false);
 }

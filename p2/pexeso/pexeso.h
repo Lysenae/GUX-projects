@@ -18,6 +18,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QFile>
+#include <QTextStream>
+#include <QStringList>
 
 #include "newgamedialog.h"
 #include "tile.h"
@@ -81,6 +83,9 @@ private:
     void clearLayout();
     void createNewGame();
 
+    void save(QFile *file);
+    bool load(QFile *file);
+
     void mousePressEvent(QMouseEvent e);
 
 private slots:
@@ -88,6 +93,8 @@ private slots:
     void onNewGame();
     bool onSaveGame();
     bool onLoadGame();
+    void onEndTurn(bool inc_score);
+    void onGameOver();
 };
 
 #endif // PEXESO_H

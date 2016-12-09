@@ -17,8 +17,14 @@ class Tile : public QWidget
     Q_OBJECT
 
 public:
-    explicit Tile(int id, Theme *theme, QWidget *parent = 0);
-    void mousePressEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
+    explicit Tile(int id, int order, Theme *theme, QWidget *parent = 0);
+    void mousePressEvent(QMouseEvent *) Q_DECL_OVERRIDE;
+    bool isFlipped();
+    bool isCollected();
+    void toggleFlipped();
+    void setCollected();
+    int id();
+    int order();
 
 private:
     const int BACK  = 0;
@@ -28,6 +34,7 @@ private:
     bool    m_flipped;
     bool    m_collected;
     Theme  *m_theme;
+    int     m_order;
 
     QPixmap             *m_pm;
     QGraphicsScene      *m_scene;
@@ -39,6 +46,7 @@ private:
     void changePixmap();
 
 signals:
+    void clicked();
 
 public slots:
 };
