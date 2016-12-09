@@ -14,8 +14,6 @@
 #include <QRect>
 #include <QPoint>
 
-#include <QDebug>
-
 class NewGameDialog: public QDialog
 {
     Q_OBJECT

@@ -14,6 +14,7 @@ public:
     int getScore(int i);
     void incScore(int i);
     void setScore(int i, int score);
+    void setCurrent(int i);
     QVector<int> getWinners();
 
 private:

@@ -9,8 +9,6 @@
 #include <QTime>
 #include <QStringList>
 
-#include <QDebug>
-
 #include "dimension.h"
 #include "theme.h"
 #include "tile.h"
@@ -24,6 +22,9 @@ public:
     virtual void mousePressEvent(QMouseEvent *) Q_DECL_OVERRIDE;
     void createBoard();
     QVector<QString> toStrings();
+    void setFirstSelected(int i);
+    void setSecondSelected(int i);
+    void createLoadedBoard(QVector<QVector<int>> tv, int t1, int t2);
 
 private:
     Dimension *m_dim;

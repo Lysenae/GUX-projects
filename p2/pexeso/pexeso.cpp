@@ -23,6 +23,7 @@ Pexeso::Pexeso(QWidget *parent) : QMainWindow(parent)
 
 Pexeso::~Pexeso()
 {
+    clearLayout();
 }
 
 void Pexeso::createMenu()
@@ -123,8 +124,18 @@ void Pexeso::createLayout()
     m_info_w->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     m_info_w->setLayout(m_info_lt);
 
-    // Board
-    m_board_w = new Board(m_dim, m_theme, m_window);
+    // Main layout
+    m_main_lt  = new QHBoxLayout();
+    m_main_lt->addWidget(m_info_w);
+
+    m_window->setLayout(m_main_lt);
+
+    setCentralWidget(m_window);
+}
+
+void Pexeso::createBoard()
+{
+    m_board_w = new Board(m_dim, m_theme);
     QPalette Pal(palette());
 
     Pal.setColor(QPalette::Background, Qt::black);
@@ -132,17 +143,10 @@ void Pexeso::createLayout()
     m_board_w->setPalette(Pal);
     m_board_w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    QObject::connect(m_board_w, SIGNAL(endTurn(bool)), this, SLOT(onEndTurn(bool)));
-    QObject::connect(m_board_w, SIGNAL(gameOver()), this, SLOT(onGameOver()));
-
-    // Main layout
-    m_main_lt  = new QHBoxLayout();
-    m_main_lt->addWidget(m_info_w);
     m_main_lt->addWidget(m_board_w);
 
-    m_window->setLayout(m_main_lt);
-
-    setCentralWidget(m_window);
+    QObject::connect(m_board_w, SIGNAL(endTurn(bool)), this, SLOT(onEndTurn(bool)));
+    QObject::connect(m_board_w, SIGNAL(gameOver()), this, SLOT(onGameOver()));
 }
 
 void Pexeso::clearLayout()
@@ -160,11 +164,13 @@ void Pexeso::clearLayout()
 void Pexeso::createNewGame()
 {
     createLayout();
+    createBoard();
+
     m_board_w->createBoard();
-    setMinimumSize(m_info_w->width()+m_board_w->minimumWidth()+10,
-        m_board_w->minimumHeight()+50);
-    resize(m_info_w->width()+m_board_w->minimumWidth()+10,
-        m_board_w->minimumHeight()+50);
+    int w = m_info_w->width()+m_board_w->minimumWidth()+50;
+    int h = m_board_w->minimumHeight()+50;
+    setMinimumSize(w, h);
+    resize(w, h);
     m_save_action->setEnabled(true);
 }
 
@@ -178,7 +184,7 @@ void Pexeso::save(QFile *file)
     l << "players";
     l << QString::number(m_players->count());
     l << QString::number(m_players->current());
-    stream << l.join(',') << "\n";
+    stream << l.join(';') << "\n";
     l.clear();
 
     for(int i=1; i<=m_players->count(); ++i)
@@ -207,9 +213,132 @@ void Pexeso::save(QFile *file)
     }
 }
 
-bool Pexeso::load(QFile *)
+bool Pexeso::load(QStringList lines)
 {
+    clearLayout();
 
+    QStringList parts;
+    QVector<QVector<int>> tv;
+    QVector<int> tvh;
+    QString line;
+
+    bool c_players = false;
+    bool c_size    = false;
+    bool c_theme   = false;
+    bool c_select  = false;
+
+    int l, m, n, s, ct, cs, t1, t2;
+    bool cl, cm, cn;
+
+    cs = ct = -1;
+    s = 0;
+
+    for(int i=0; i<lines.size(); ++i)
+    {
+        line = lines[i].trimmed();
+        parts = line.split(';');
+
+        if(parts[0] == "players" && parts.size() == 3)
+        {
+            l = parts[1].toInt(&cl);
+            m = parts[2].toInt(&cm);
+            if(cl && cm)
+            {
+                m_players->setCount(l);
+                m_players->setCurrent(m);
+                c_players = true;
+                cs = l;
+            }
+        }
+        else if(parts[0] == "score" && parts.size() == 3)
+        {
+            l = parts[1].toInt(&cl);
+            m = parts[2].toInt(&cm);
+            if(cl && cm)
+            {
+                m_players->setScore(l, m);
+                s++;
+            }
+        }
+        else if(parts[0] == "size" && parts.size() == 3)
+        {
+            l = parts[1].toInt(&cl);
+            m = parts[2].toInt(&cm);
+            if(cl && cm)
+            {
+                m_dim->set(l, m);
+                c_size = true;
+                ct = l*m;
+            }
+        }
+        else if(parts[0] == "theme" && parts.size() == 2)
+        {
+            l = parts[1].toInt(&cl);
+            if(cl)
+            {
+                m_theme->set(l);
+                c_theme = true;
+            }
+        }
+        else if(parts[0] == "tile")
+        {
+            l = parts[1].toInt(&cl);
+            m = parts[2].toInt(&cm);
+            n = parts[3].toInt(&cn);
+            if(cl && cm && cn)
+            {
+                tvh.clear();
+                tvh << l << m << n;
+                tv << tvh;
+            }
+        }
+        else if(parts[0] == "select" && parts.size() == 3)
+        {
+            l = parts[1].toInt(&cl);
+            m = parts[2].toInt(&cm);
+            if(cl && cm)
+            {
+                t1 = l;
+                t2 = m;
+                c_select = true;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    if(c_players && c_size && c_theme && c_select && (s == cs) &&
+    (tv.size() == ct))
+    {
+        createLayout();
+        createBoard();
+        m_board_w->createLoadedBoard(tv, t1, t2);
+        int w = m_info_w->width()+m_board_w->minimumWidth()+50;
+        int h = m_board_w->minimumHeight()+50;
+        setMinimumSize(w, h);
+        resize(w, h);
+        m_save_action->setEnabled(true);
+        return true;
+    }
+
+    return false;
+}
+
+QStringList Pexeso::fileToStringList(QFile *file)
+{
+    QStringList rslt;
+    while(!file->atEnd())
+        rslt << file->readLine().trimmed();
+    return rslt;
+}
+
+void Pexeso::showErrorMsg(QString msg)
+{
+    QMessageBox err_box;
+    err_box.critical(0, "Error", msg);
+    err_box.setFixedSize(500, 200);
 }
 
 void Pexeso::getSettings(int players, int theme, QPoint size)
@@ -243,12 +372,11 @@ bool Pexeso::onSaveGame()
         }
         else
         {
-            QMessageBox err_box;
-            err_box.critical(0, "Error","Could not open file to write!");
-            err_box.setFixedSize(500, 200);
+            showErrorMsg("Could not open file to write!");
             return false;
         }
     }
+
     return false;
 }
 
@@ -262,15 +390,18 @@ bool Pexeso::onLoadGame()
         QFile file(fn);
         if(file.open(QIODevice::ReadOnly))
         {
-            // TODO
+            bool status = load(fileToStringList(&file));
+            if(!status)
+            {
+                showErrorMsg("Corrupted save file!");
+                return false;
+            }
             file.close();
             return true;
         }
         else
         {
-            QMessageBox err_box;
-            err_box.critical(0, "Error","Could not open file to read!");
-            err_box.setFixedSize(500, 200);
+            showErrorMsg("Could not open file to read!");
             return false;
         }
     }

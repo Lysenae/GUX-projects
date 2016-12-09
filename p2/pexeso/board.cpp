@@ -7,7 +7,7 @@ Board::Board(Dimension *dim, Theme *theme, QWidget *parent) : QWidget(parent)
     m_first  = nullptr;
     m_second = nullptr;
     m_pairs  = m_dim->size()/2;
-    setMinimumSize(m_dim->rows()*105, m_dim->cols()*105);
+    setMinimumSize(m_dim->cols()*105, m_dim->rows()*105);
 }
 
 Board::~Board()
@@ -103,18 +103,12 @@ QVector<QString> Board::toStrings()
     QStringList l;
     Tile *t = nullptr;
 
-    l << "first";
-    l << QString::number((m_first == nullptr) ? -1 : m_first->order());
-    vs.append(l.join(';'));
-    l.clear();
-    l << "second";
-    l << QString::number((m_second == nullptr) ? -1 : m_second->order());
-    vs.append(l.join(';'));
     l.clear();
 
     for(int i=0; i<m_tiles.size(); ++i)
     {
         t = m_tiles[i];
+        l << "tile";
         l << QString::number(t->id());
         l << QString::number(t->isFlipped() ? 1 : 0);
         l << QString::number(t->isCollected() ? 1 : 0);
@@ -122,7 +116,61 @@ QVector<QString> Board::toStrings()
         l.clear();
     }
 
+    l << "select";
+    l << QString::number((m_first == nullptr) ? -1 : m_first->order());
+    l << QString::number((m_second == nullptr) ? -1 : m_second->order());
+    vs.append(l.join(';'));
+
     return vs;
+}
+
+void Board::setFirstSelected(int i)
+{
+    if(i>=0 && i<m_tiles.size())
+        m_first = m_tiles[i];
+    else
+        m_second = nullptr;
+}
+
+void Board::setSecondSelected(int i)
+{
+    if(i>=0 && i<m_tiles.size())
+        m_second = m_tiles[i];
+    else
+        m_second = nullptr;
+}
+
+void Board::createLoadedBoard(QVector<QVector<int>> tv, int t1, int t2)
+{
+    m_rows = new QVBoxLayout();
+    m_rows->setSpacing(5);
+
+    for(int i=0; i<m_dim->rows(); ++i)
+    {
+        QHBoxLayout *tmp = new QHBoxLayout();
+        m_rows->addLayout(tmp);
+        m_cols.append(tmp);
+    }
+
+    int c = 0;
+    for(int i=0; i<tv.size(); ++i)
+    {
+        Tile *t = new Tile(tv[i][0], i, m_theme, this);
+        if(tv[i][1] == 1) t->toggleFlipped();
+        if(tv[i][2] == 1)
+        {
+            t->setCollected();
+            c++;
+        }
+        if(i == t1) m_first  = t;
+        if(i == t2) m_second = t;
+        m_tiles.append(t);
+        m_cols[i / m_dim->cols()]->addWidget(t);
+        QObject::connect(t, SIGNAL(clicked()), this, SLOT(onTileClicked()));
+    }
+
+    m_pairs -= (c/2);
+    setLayout(m_rows);
 }
 
 void Board::onTileClicked()

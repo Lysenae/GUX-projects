@@ -80,11 +80,14 @@ private:
 
     void createMenu();
     void createLayout();
+    void createBoard();
     void clearLayout();
     void createNewGame();
 
     void save(QFile *file);
-    bool load(QFile *file);
+    bool load(QStringList lines);
+    QStringList fileToStringList(QFile *file);
+    void showErrorMsg(QString msg);
 
     void mousePressEvent(QMouseEvent e);
 

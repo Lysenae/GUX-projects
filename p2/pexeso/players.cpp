@@ -60,6 +60,14 @@ void Players::setScore(int i, int score)
     }
 }
 
+void Players::setCurrent(int i)
+{
+    if(i >0 && i<=m_count)
+    {
+        m_current = i;
+    }
+}
+
 QVector<int> Players::getWinners()
 {
     QVector<int> w;

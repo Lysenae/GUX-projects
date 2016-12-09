@@ -4,8 +4,6 @@
 #include <QPixmap>
 #include <QString>
 
-#include <QDebug>
-
 enum ThemeType
 {
     THEME_NONE = 0,
