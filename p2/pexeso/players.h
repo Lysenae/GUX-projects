@@ -1,3 +1,6 @@
+// File:   players.h
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #ifndef PLAYER_H
 #define PLAYER_H
 

@@ -1,3 +1,6 @@
+// File:   newgamedialog.h
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #ifndef NEWGAMEDIALOG_H
 #define NEWGAMEDIALOG_H
 

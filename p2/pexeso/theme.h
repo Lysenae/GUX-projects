@@ -1,8 +1,15 @@
+// File:   theme.h
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #ifndef THEME_H
 #define THEME_H
 
 #include <QPixmap>
 #include <QString>
+#include <QVector>
+#include <QFile>
+#include <QByteArray>
+#include <QStringList>
 
 enum ThemeType
 {

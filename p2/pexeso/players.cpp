@@ -1,3 +1,6 @@
+// File:   players.cpp
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #include "players.h"
 
 Players::Players()

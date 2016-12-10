@@ -1,3 +1,6 @@
+// File:   board.h
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #ifndef BOARD_H
 #define BOARD_H
 

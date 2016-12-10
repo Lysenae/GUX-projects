@@ -1,3 +1,6 @@
+// File:   pexeso.h
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #ifndef PEXESO_H
 #define PEXESO_H
 
@@ -20,6 +23,9 @@
 #include <QFile>
 #include <QTextStream>
 #include <QStringList>
+#include <QResource>
+#include <QCoreApplication>
+#include <QDebug>
 
 #include "newgamedialog.h"
 #include "tile.h"

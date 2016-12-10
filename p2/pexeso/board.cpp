@@ -1,3 +1,6 @@
+// File:   board.cpp
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #include "board.h"
 
 Board::Board(Dimension *dim, Theme *theme, QWidget *parent) : QWidget(parent)

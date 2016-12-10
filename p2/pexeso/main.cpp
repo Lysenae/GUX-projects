@@ -1,3 +1,6 @@
+// File:   main.cpp
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #include "pexeso.h"
 #include <QApplication>
 

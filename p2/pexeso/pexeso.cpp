@@ -1,7 +1,12 @@
+// File:   pexeso.cpp
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #include "pexeso.h"
 
 Pexeso::Pexeso(QWidget *parent) : QMainWindow(parent)
 {
+    QResource::registerResource(QString("images.rcc"));
+
     m_ngd = new NewGameDialog();
 
     m_dim     = new Dimension(0, 0);

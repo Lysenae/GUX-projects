@@ -1,3 +1,6 @@
+// File:   newgamedialog.cpp
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #include "newgamedialog.h"
 
 NewGameDialog::NewGameDialog()

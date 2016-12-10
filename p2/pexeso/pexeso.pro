@@ -28,6 +28,3 @@ HEADERS  += pexeso.h \
     dimension.h \
     theme.h \
     board.h
-
-RESOURCES += \
-    resources.qrc

@@ -1,3 +1,6 @@
+// File:   tile.h
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #ifndef TILE_H
 #define TILE_H
 

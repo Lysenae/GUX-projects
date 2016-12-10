@@ -1,3 +1,6 @@
+// File:   tile.cpp
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #include "tile.h"
 
 Tile::Tile(int id, int order, Theme *theme, QWidget *parent)

@@ -1,3 +1,6 @@
+// File:   theme.cpp
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #include "theme.h"
 
 Theme::Theme()

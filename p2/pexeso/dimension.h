@@ -1,3 +1,6 @@
+// File:   dimension.h
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #ifndef DIMENSION_H
 #define DIMENSION_H
 

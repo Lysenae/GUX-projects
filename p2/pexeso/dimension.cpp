@@ -1,3 +1,6 @@
+// File:   dimension.cpp
+// Author: Daniel Klimaj; xklima22@stud.fit.vutbr.cz
+
 #include "dimension.h"
 
 Dimension::Dimension(int rows, int cols)
