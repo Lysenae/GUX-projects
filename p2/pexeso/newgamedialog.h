@@ -42,8 +42,8 @@ private:
     QComboBox *m_theme_cb;
     QComboBox *m_size_cb;
 
-    const int nWidth  = 250;
-    const int nHeight = 165;
+    static const int nWidth  = 250;
+    static const int nHeight = 165;
 
     void populateComboBoxes();
 

@@ -76,9 +76,9 @@ void NewGameDialog::populateComboBoxes()
 
 void NewGameDialog::onCreateClicked()
 {
-    int players = m_players_cb->currentData().toInt();
-    int theme   = m_theme_cb->currentData().toInt();
-    QPoint size = m_size_cb->currentData().toPoint();
+    int players = m_players_cb->itemData(m_players_cb->currentIndex()).toInt();
+    int theme   = m_theme_cb->itemData(m_theme_cb->currentIndex()).toInt();
+    QPoint size = m_size_cb->itemData(m_size_cb->currentIndex()).toPoint();
     emit passSettings(players, theme, size);
     accept();
 }

@@ -18,7 +18,7 @@ class Tile : public QWidget
 
 public:
     explicit Tile(int id, int order, Theme *theme, QWidget *parent = 0);
-    void mousePressEvent(QMouseEvent *) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *);
     bool isFlipped();
     bool isCollected();
     void toggleFlipped();
@@ -27,8 +27,8 @@ public:
     int order();
 
 private:
-    const int BACK  = 0;
-    const int BLANK = -1;
+    static const int BACK  = 0;
+    static const int BLANK = -1;
 
     int     m_id;
     bool    m_flipped;

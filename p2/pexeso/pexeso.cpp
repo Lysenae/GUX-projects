@@ -151,11 +151,11 @@ void Pexeso::createBoard()
 
 void Pexeso::clearLayout()
 {
-    if(m_window != nullptr)
+    if(m_window != NULL)
     {
         delete m_window;
         m_window = new QWidget();
-        setCentralWidget(nullptr);
+        setCentralWidget(NULL);
     }
 
     m_scores.clear();
@@ -184,7 +184,7 @@ void Pexeso::save(QFile *file)
     l << "players";
     l << QString::number(m_players->count());
     l << QString::number(m_players->current());
-    stream << l.join(';') << "\n";
+    stream << l.join(";") << "\n";
     l.clear();
 
     for(int i=1; i<=m_players->count(); ++i)
@@ -192,19 +192,19 @@ void Pexeso::save(QFile *file)
         l << "score";
         l << QString::number(i);
         l << QString::number(m_players->getScore(i));
-        stream << l.join(';') << "\n";
+        stream << l.join(";") << "\n";
         l.clear();
     }
 
     l << "size";
     l << QString::number(m_dim->rows());
     l << QString::number(m_dim->cols());
-    stream << l.join(';') << "\n";
+    stream << l.join(";") << "\n";
     l.clear();
 
     l << "theme";
     l << QString::number((int)m_theme->get());
-    stream << l.join(';') << "\n";
+    stream << l.join(";") << "\n";
     l.clear();
 
     for(int i=0; i<board.size(); ++i)
@@ -218,7 +218,7 @@ bool Pexeso::load(QStringList lines)
     clearLayout();
 
     QStringList parts;
-    QVector<QVector<int>> tv;
+    QVector<QVector<int> > tv;
     QVector<int> tvh;
     QString line;
 
@@ -230,6 +230,7 @@ bool Pexeso::load(QStringList lines)
     int l, m, n, s, ct, cs, t1, t2;
     bool cl, cm, cn;
 
+    t1 = t2 = -1;
     cs = ct = -1;
     s = 0;
 

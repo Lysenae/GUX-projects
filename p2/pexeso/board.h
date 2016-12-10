@@ -19,12 +19,12 @@ class Board : public QWidget
 public:
     explicit Board(Dimension *dim, Theme *theme, QWidget *parent = 0);
     ~Board();
-    virtual void mousePressEvent(QMouseEvent *) Q_DECL_OVERRIDE;
+    virtual void mousePressEvent(QMouseEvent *);
     void createBoard();
     QVector<QString> toStrings();
     void setFirstSelected(int i);
     void setSecondSelected(int i);
-    void createLoadedBoard(QVector<QVector<int>> tv, int t1, int t2);
+    void createLoadedBoard(QVector<QVector<int> > tv, int t1, int t2);
 
 private:
     Dimension *m_dim;

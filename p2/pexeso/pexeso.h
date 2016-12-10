@@ -38,8 +38,8 @@ public:
     ~Pexeso();
 
 private:
-    const int nWidth  = 800;
-    const int nHeight = 600;
+    static const int nWidth  = 800;
+    static const int nHeight = 600;
 
     NewGameDialog *m_ngd;
 

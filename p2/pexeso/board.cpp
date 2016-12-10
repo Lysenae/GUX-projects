@@ -4,8 +4,8 @@ Board::Board(Dimension *dim, Theme *theme, QWidget *parent) : QWidget(parent)
 {
     m_dim    = dim;
     m_theme  = theme;
-    m_first  = nullptr;
-    m_second = nullptr;
+    m_first  = NULL;
+    m_second = NULL;
     m_pairs  = m_dim->size()/2;
     setMinimumSize(m_dim->cols()*105, m_dim->rows()*105);
 }
@@ -16,7 +16,7 @@ Board::~Board()
 
 void Board::mousePressEvent(QMouseEvent*)
 {
-    if(m_first != nullptr && m_second != nullptr)
+    if(m_first != NULL && m_second != NULL)
     {
         hideFlippedTiles();
     }
@@ -78,8 +78,8 @@ void Board::hideFlippedTiles()
     {
         m_first->setCollected();
         m_second->setCollected();
-        m_first  = nullptr;
-        m_second = nullptr;
+        m_first  = NULL;
+        m_second = NULL;
         m_pairs--;
         emit endTurn(true);
         if(m_pairs <= 0)
@@ -91,8 +91,8 @@ void Board::hideFlippedTiles()
     {
         m_first->toggleFlipped();
         m_second->toggleFlipped();
-        m_first  = nullptr;
-        m_second = nullptr;
+        m_first  = NULL;
+        m_second = NULL;
         emit endTurn(false);
     }
 }
@@ -101,7 +101,7 @@ QVector<QString> Board::toStrings()
 {
     QVector<QString> vs;
     QStringList l;
-    Tile *t = nullptr;
+    Tile *t = NULL;
 
     l.clear();
 
@@ -112,14 +112,14 @@ QVector<QString> Board::toStrings()
         l << QString::number(t->id());
         l << QString::number(t->isFlipped() ? 1 : 0);
         l << QString::number(t->isCollected() ? 1 : 0);
-        vs.append(l.join(';'));
+        vs.append(l.join(";"));
         l.clear();
     }
 
     l << "select";
-    l << QString::number((m_first == nullptr) ? -1 : m_first->order());
-    l << QString::number((m_second == nullptr) ? -1 : m_second->order());
-    vs.append(l.join(';'));
+    l << QString::number((m_first == NULL) ? -1 : m_first->order());
+    l << QString::number((m_second == NULL) ? -1 : m_second->order());
+    vs.append(l.join(";"));
 
     return vs;
 }
@@ -129,7 +129,7 @@ void Board::setFirstSelected(int i)
     if(i>=0 && i<m_tiles.size())
         m_first = m_tiles[i];
     else
-        m_second = nullptr;
+        m_second = NULL;
 }
 
 void Board::setSecondSelected(int i)
@@ -137,10 +137,10 @@ void Board::setSecondSelected(int i)
     if(i>=0 && i<m_tiles.size())
         m_second = m_tiles[i];
     else
-        m_second = nullptr;
+        m_second = NULL;
 }
 
-void Board::createLoadedBoard(QVector<QVector<int>> tv, int t1, int t2)
+void Board::createLoadedBoard(QVector<QVector<int> > tv, int t1, int t2)
 {
     m_rows = new QVBoxLayout();
     m_rows->setSpacing(5);
@@ -178,7 +178,7 @@ void Board::onTileClicked()
     Tile *t = qobject_cast<Tile *>(QObject::sender());
 
 
-    if(m_first == nullptr)
+    if(m_first == NULL)
     {
         if(!t->isFlipped() && !t->isCollected())
         {
@@ -186,7 +186,7 @@ void Board::onTileClicked()
             t->toggleFlipped();
         }
     }
-    else if(m_second == nullptr)
+    else if(m_second == NULL)
     {
         if(!t->isFlipped() && !t->isCollected())
         {
