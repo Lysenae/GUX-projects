@@ -3,6 +3,10 @@
 
 #include "pexeso.h"
 
+///
+/// \brief Constructor.
+/// \param parent
+///
 Pexeso::Pexeso(QWidget *parent) : QMainWindow(parent)
 {
     QResource::registerResource(QString("images.rcc"));
@@ -26,11 +30,17 @@ Pexeso::Pexeso(QWidget *parent) : QMainWindow(parent)
         this, SLOT(getSettings(int, int, QPoint)));
 }
 
+///
+/// \brief Destructor.
+///
 Pexeso::~Pexeso()
 {
     clearLayout();
 }
 
+///
+/// \brief Create menu.
+///
 void Pexeso::createMenu()
 {
     m_new_action = new QAction(tr("&New ..."), this);
@@ -61,6 +71,9 @@ void Pexeso::createMenu()
     m_game_menu->addAction(m_quit_action);
 }
 
+///
+/// \brief Create layout.
+///
 void Pexeso::createLayout()
 {
     // Info panel
@@ -138,6 +151,9 @@ void Pexeso::createLayout()
     setCentralWidget(m_window);
 }
 
+///
+/// \brief Pexeso::Create board.
+///
 void Pexeso::createBoard()
 {
     m_board_w = new Board(m_dim, m_theme);
@@ -154,6 +170,9 @@ void Pexeso::createBoard()
     QObject::connect(m_board_w, SIGNAL(gameOver()), this, SLOT(onGameOver()));
 }
 
+///
+/// \brief Clear layout.
+///
 void Pexeso::clearLayout()
 {
     if(m_window != NULL)
@@ -166,6 +185,9 @@ void Pexeso::clearLayout()
     m_scores.clear();
 }
 
+///
+/// \brief Create new game.
+///
 void Pexeso::createNewGame()
 {
     createLayout();
@@ -179,6 +201,10 @@ void Pexeso::createNewGame()
     m_save_action->setEnabled(true);
 }
 
+///
+/// \brief Save current game.
+/// \param file
+///
 void Pexeso::save(QFile *file)
 {
     QTextStream stream(file);
@@ -218,6 +244,11 @@ void Pexeso::save(QFile *file)
     }
 }
 
+///
+/// \brief Load saved game.
+/// \param lines Lines of file
+/// \return
+///
 bool Pexeso::load(QStringList lines)
 {
     clearLayout();
@@ -332,6 +363,11 @@ bool Pexeso::load(QStringList lines)
     return false;
 }
 
+///
+/// \brief Reads file line by line.
+/// \param file
+/// \return File lines
+///
 QStringList Pexeso::fileToStringList(QFile *file)
 {
     QStringList rslt;

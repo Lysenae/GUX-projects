@@ -3,6 +3,9 @@
 
 #include "board.h"
 
+///
+/// \brief Constructor
+///
 Board::Board(Dimension *dim, Theme *theme, QWidget *parent) : QWidget(parent)
 {
     m_dim    = dim;
@@ -13,10 +16,16 @@ Board::Board(Dimension *dim, Theme *theme, QWidget *parent) : QWidget(parent)
     setMinimumSize(m_dim->cols()*105, m_dim->rows()*105);
 }
 
+///
+/// \brief Destructor
+///
 Board::~Board()
 {
 }
 
+///
+/// \brief Overriden mousePressEvent handler. Params are ignored.
+///
 void Board::mousePressEvent(QMouseEvent*)
 {
     if(m_first != NULL && m_second != NULL)
@@ -25,6 +34,9 @@ void Board::mousePressEvent(QMouseEvent*)
     }
 }
 
+///
+/// \brief Creates new game board according to given settings (theme, size).
+///
 void Board::createBoard()
 {
     m_rows = new QVBoxLayout();
@@ -60,6 +72,10 @@ void Board::createBoard()
     setLayout(m_rows);
 }
 
+///
+/// \brief Shuffles values in given vector
+/// \param v Shuffled vector pointer.
+///
 void Board::shuffleVector(QVector<int> *v)
 {
     int i = v->size();
@@ -75,6 +91,9 @@ void Board::shuffleVector(QVector<int> *v)
     }
 }
 
+///
+/// \brief Show backs of all not collected tiles.
+///
 void Board::hideFlippedTiles()
 {
     if(m_first->id() == m_second->id())
@@ -100,6 +119,10 @@ void Board::hideFlippedTiles()
     }
 }
 
+///
+/// \brief Creates CSV representation of Board.
+/// \return CSV representation of Board
+///
 QVector<QString> Board::toStrings()
 {
     QVector<QString> vs;
@@ -127,6 +150,10 @@ QVector<QString> Board::toStrings()
     return vs;
 }
 
+///
+/// \brief Set first selected tile.
+/// \param i Index of tile in board.
+///
 void Board::setFirstSelected(int i)
 {
     if(i>=0 && i<m_tiles.size())
@@ -135,6 +162,10 @@ void Board::setFirstSelected(int i)
         m_second = NULL;
 }
 
+///
+/// \brief Set second selected tile.
+/// \param i Index of tile in board.
+///
 void Board::setSecondSelected(int i)
 {
     if(i>=0 && i<m_tiles.size())
@@ -143,6 +174,12 @@ void Board::setSecondSelected(int i)
         m_second = NULL;
 }
 
+///
+/// \brief Creates the board according to given params
+/// \param tv Tiles - ID, flipped flag, collected flag
+/// \param t1 First selected tile index
+/// \param t2 Second selected tile index
+///
 void Board::createLoadedBoard(QVector<QVector<int> > tv, int t1, int t2)
 {
     m_rows = new QVBoxLayout();
@@ -176,6 +213,9 @@ void Board::createLoadedBoard(QVector<QVector<int> > tv, int t1, int t2)
     setLayout(m_rows);
 }
 
+///
+/// \brief Tile clicked handler
+///
 void Board::onTileClicked()
 {
     Tile *t = qobject_cast<Tile *>(QObject::sender());

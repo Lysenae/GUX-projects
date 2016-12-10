@@ -3,11 +3,18 @@
 
 #include "players.h"
 
+///
+/// \brief Constructor.
+///
 Players::Players()
 {
     setCount(1);
 }
 
+///
+/// \brief Set player count.
+/// \param count
+///
 void Players::setCount(int count)
 {
     if(count < 1 || count > 4)
@@ -21,21 +28,37 @@ void Players::setCount(int count)
         m_scores.append(0);
 }
 
+///
+/// \brief Set current player to next one.
+///
 void Players::next()
 {
     m_current = (m_current + 1 > m_count) ? 1 : m_current + 1;
 }
 
+///
+/// \brief Get current player.
+/// \return Current player
+///
 int Players::current()
 {
     return m_current;
 }
 
+///
+/// \brief Get player count.
+/// \return Player count
+///
 int Players::count()
 {
     return m_count;
 }
 
+///
+/// \brief Get score of player number i.
+/// \param i Player number
+/// \return Score
+///
 int Players::getScore(int i)
 {
     i = i-1;
@@ -44,6 +67,10 @@ int Players::getScore(int i)
     return -1;
 }
 
+///
+/// \brief Increase score of player i.
+/// \param i Player number
+///
 void Players::incScore(int i)
 {
     i = i-1;
@@ -54,6 +81,11 @@ void Players::incScore(int i)
     }
 }
 
+///
+/// \brief Set score of player i.
+/// \param i Player number
+/// \param score
+///
 void Players::setScore(int i, int score)
 {
     i = i-1;
@@ -63,6 +95,10 @@ void Players::setScore(int i, int score)
     }
 }
 
+///
+/// \brief Set current player
+/// \param i Player number
+///
 void Players::setCurrent(int i)
 {
     if(i >0 && i<=m_count)
@@ -71,6 +107,10 @@ void Players::setCurrent(int i)
     }
 }
 
+///
+/// \brief Get player(s) with highest score.
+/// \return Vector of player numbers
+///
 QVector<int> Players::getWinners()
 {
     QVector<int> w;

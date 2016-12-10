@@ -3,11 +3,18 @@
 
 #include "theme.h"
 
+///
+/// \brief Constructor
+///
 Theme::Theme()
 {
     m_theme = THEME_NONE;
 }
 
+///
+/// \brief Set current theme
+/// @param theme Theme ID
+///
 void Theme::set(int theme)
 {
     switch(theme)
@@ -27,11 +34,20 @@ void Theme::set(int theme)
     }
 }
 
+///
+/// \brief Get current theme
+/// @return Theme type enum
+///
 ThemeType Theme::get()
 {
     return m_theme;
 }
 
+///
+/// \brief Get image name for given id in selected theme.
+/// @param i id
+/// @return Resource identificator for image
+///
 QString Theme::imageName(int i)
 {
     if(i >= 0 && i <= 18 && m_theme != THEME_NONE)
@@ -50,6 +66,10 @@ QString Theme::imageName(int i)
     return ":/x.jpg";
 }
 
+///
+/// \brief Theme ID to string.
+/// @return String representation of theme name
+///
 QString Theme::toString()
 {
     switch(m_theme)

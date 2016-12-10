@@ -95,8 +95,6 @@ private:
     QStringList fileToStringList(QFile *file);
     void showErrorMsg(QString msg);
 
-    void mousePressEvent(QMouseEvent e);
-
 private slots:
     void getSettings(int players, int theme, QPoint size);
     void onNewGame();

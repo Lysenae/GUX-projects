@@ -3,6 +3,9 @@
 
 #include "newgamedialog.h"
 
+///
+/// \brief Constructor
+///
 NewGameDialog::NewGameDialog()
 {
     m_main_lt    = new QVBoxLayout();
@@ -57,6 +60,9 @@ NewGameDialog::NewGameDialog()
     populateComboBoxes();
 }
 
+///
+/// \brief Fill comboboxes with values and set initial values.
+///
 void NewGameDialog::populateComboBoxes()
 {
     m_players_cb->addItem("1", QVariant(1));
@@ -77,6 +83,9 @@ void NewGameDialog::populateComboBoxes()
     m_theme_cb->setCurrentIndex(0);
 }
 
+///
+/// \brief Handler for accepting dialog.
+///
 void NewGameDialog::onCreateClicked()
 {
     int players = m_players_cb->itemData(m_players_cb->currentIndex()).toInt();

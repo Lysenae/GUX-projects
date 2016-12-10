@@ -3,6 +3,13 @@
 
 #include "tile.h"
 
+///
+/// \brief Constructor
+/// \param id
+/// \param order
+/// \param theme
+/// \param parent
+///
 Tile::Tile(int id, int order, Theme *theme, QWidget *parent)
  : QWidget(parent)
 {
@@ -33,27 +40,44 @@ Tile::Tile(int id, int order, Theme *theme, QWidget *parent)
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
+///
+/// \brief Mouse press event handler.
+///
 void Tile::mousePressEvent(QMouseEvent *)
 {
     emit clicked();
 }
 
+///
+/// \brief Check if tile is flipped.
+/// \return Bool
+///
 bool Tile::isFlipped()
 {
     return m_flipped;
 }
 
+///
+/// \brief Check if tile is collected.
+/// \return Bool
+///
 bool Tile::isCollected()
 {
     return m_collected;
 }
 
+///
+/// \brief Toggle flipped flag.
+///
 void Tile::toggleFlipped()
 {
     m_flipped = !m_flipped;
     changePixmap();
 }
 
+///
+/// \brief Set tile's collected flag to true.
+///
 void Tile::setCollected()
 {
     m_collected = true;
@@ -61,16 +85,27 @@ void Tile::setCollected()
     changePixmap();
 }
 
+///
+/// \brief Tile id.
+/// \return Id
+///
 int Tile::id()
 {
     return m_id;
 }
 
+///
+/// \brief Tile order.
+/// \return Order
+///
 int Tile::order()
 {
     return m_order;
 }
 
+///
+/// \brief Change tile's image according to flipped/collected flags.
+///
 void Tile::changePixmap()
 {
     if(m_pm) delete m_pm;
