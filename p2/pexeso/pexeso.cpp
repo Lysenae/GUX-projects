@@ -48,7 +48,8 @@ void Pexeso::closeEvent(QCloseEvent *e)
     {
         QMessageBox::StandardButton r;
         QMessageBox q;
-        r = q.question(0, "Quit?", "Are you sure you want to quit?");
+        r = q.question(0, "Quit?", "Are you sure you want to quit?",
+            QMessageBox::Yes|QMessageBox::No);
         q.setFixedSize(500, 200);
         if(r == QMessageBox::No)
         {
