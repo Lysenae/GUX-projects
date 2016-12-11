@@ -17,7 +17,7 @@ Pexeso::Pexeso(QWidget *parent) : QMainWindow(parent)
     m_players = new Players();
     m_theme   = new Theme();
     m_window  = new QWidget();
-
+    m_game    = false;
     QRect scr = QApplication::desktop()->screenGeometry();
     setGeometry(scr.width()/2 - nWidth/2, scr.height()/2 - nHeight/2,
         nWidth, nHeight);
@@ -36,6 +36,25 @@ Pexeso::Pexeso(QWidget *parent) : QMainWindow(parent)
 Pexeso::~Pexeso()
 {
     clearLayout();
+}
+
+///
+/// \brief Close event handler.
+/// \param e
+///
+void Pexeso::closeEvent(QCloseEvent *e)
+{
+    if(m_game)
+    {
+        QMessageBox::StandardButton r;
+        QMessageBox q;
+        r = q.question(0, "Quit?", "Are you sure you want to quit?");
+        q.setFixedSize(500, 200);
+        if(r == QMessageBox::No)
+        {
+            e->ignore();
+        }
+    }
 }
 
 ///
@@ -199,6 +218,7 @@ void Pexeso::createNewGame()
     setMinimumSize(w, h);
     resize(w, h);
     m_save_action->setEnabled(true);
+    m_game = true;
 }
 
 ///
@@ -357,6 +377,7 @@ bool Pexeso::load(QStringList lines)
         setMinimumSize(w, h);
         resize(w, h);
         m_save_action->setEnabled(true);
+        m_game = true;
         return true;
     }
 
@@ -488,4 +509,5 @@ void Pexeso::onGameOver()
     msg_box.setFixedSize(500, 200);
     clearLayout();
     m_save_action->setEnabled(false);
+    m_game = false;
 }

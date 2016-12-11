@@ -42,6 +42,7 @@ class Pexeso : public QMainWindow
 public:
     Pexeso(QWidget *parent = 0);
     ~Pexeso();
+    virtual void closeEvent(QCloseEvent *e);
 
 private:
     static const int nWidth  = 800;
@@ -83,6 +84,8 @@ private:
     QLabel *m_size_lv;
     QLabel *m_cplayer_lv;
     QVector<QLabel*> m_scores;
+
+    bool m_game;
 
     void createMenu();
     void createLayout();
